@@ -33,6 +33,8 @@ class AppTheme {
     primaryColor: primaryColor,
     colorScheme: ColorScheme.dark(
       primary: primaryColor,
+      secondary: Color(0xFF1c2b22),
+      onSecondary: Color(0xFF38e07b),
       brightness: Brightness.dark,
     ),
     useMaterial3: true,

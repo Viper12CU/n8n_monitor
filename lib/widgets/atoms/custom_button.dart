@@ -17,24 +17,27 @@ class CustomButton extends StatefulWidget {
 class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap ,
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xFF184529),
-              spreadRadius: 1,
-              offset: Offset(0, 3),
-              blurRadius: 10,
-            ),
-          ],
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(30.0),
+    return IgnorePointer(
+      ignoring: widget.isLoading,
+      child: GestureDetector(
+        onTap: widget.onTap ,
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFF184529),
+                spreadRadius: 1,
+                offset: Offset(0, 3),
+                blurRadius: 10,
+              ),
+            ],
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          alignment: Alignment.center,
+          width: 400,
+          child: widget.isLoading ? _buildLoading()  : _buildButtonContent(),
         ),
-        alignment: Alignment.center,
-        width: 400,
-        child: widget.isLoading ? _buildLoading()  : _buildButtonContent(),
       ),
     );
   }

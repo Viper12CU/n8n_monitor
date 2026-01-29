@@ -5,6 +5,9 @@ import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/appbar_server_status.dart';
 import 'package:n8n_monitor/widgets/molecules/nav_bar.dart';
 import 'package:n8n_monitor/widgets/templates/dashboard_template.dart';
+import 'package:n8n_monitor/widgets/templates/executions_list_template.dart';
+import 'package:n8n_monitor/widgets/templates/settings_template.dart';
+import 'package:n8n_monitor/widgets/templates/workflows_list_template.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,16 +22,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final indexProvider = Provider.of<NavIndexProvider>(context);
 
-    final pages = [
+    final templates = [
       DashboardTemplate(),
-      Center(child: Text("1")),
-      Center(child: Text("2")),
-      Center(child: Text("3")),
+      WorkflowsListTemplate(),
+      ExecutionsListTemplate(),
+      SettingsTemplate(),
     ];
 
     return Scaffold(
       appBar: appBar(context, indexProvider.selectedIndex),
-      body: IndexedStack(index: indexProvider.selectedIndex, children: pages),
+      body: IndexedStack(index: indexProvider.selectedIndex, children: templates),
       bottomNavigationBar: NavBar(),
     );
   }
@@ -39,6 +42,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     return AppBar(
+      scrolledUnderElevation: 0,
       centerTitle: false,
       title: Row(
         spacing: 10,
@@ -67,25 +71,10 @@ class _HomePageState extends State<HomePage> {
           duration: Duration(milliseconds: 300),
           child: AppbarServerStatus(status: Status.avalible),
         ),
-        SizedBox(width: 20,),
-        userButton(),
+        SizedBox(width: 20),
       ],
       actionsIconTheme: Theme.of(context).iconTheme,
       actionsPadding: EdgeInsets.only(right: 15.0),
-    );
-  }
-
-  GestureDetector userButton() {
-    return GestureDetector(
-      child: Container(
-        height: 30,
-        width: 30,
-        decoration: BoxDecoration(
-          color: Color(0xFF163321),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(Icons.person, size: 22.0),
-      ),
     );
   }
 }

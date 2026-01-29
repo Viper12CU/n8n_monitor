@@ -26,10 +26,10 @@ class NavBar extends StatelessWidget {
           tabBackgroundColor: Color(0xFF1c2b22),
           color: Colors.grey[100]!  ,
           tabs: [
-            GButton(icon: Icons.home, text: 'Home'),
-            GButton(icon: Icons.headset_mic_sharp, text: 'Mics'),
-            GButton(icon: Icons.search, text: 'Search'),
-            GButton(icon: Icons.supervised_user_circle_outlined, text: 'Profile'),
+            GButton(icon: Icons.monitor_heart_outlined, text: 'Monitor'),
+            GButton(icon: Icons.account_tree_rounded, text: 'Workflows'),
+            GButton(icon: Icons.history_rounded, text: 'Ejecuciones'),
+            GButton(icon: Icons.settings_rounded, text: 'Opciones'),
           ],
           selectedIndex: indexProvider.selectedIndex,
           onTabChange: (index) {
