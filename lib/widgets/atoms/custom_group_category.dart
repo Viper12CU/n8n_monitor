@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 class CustomGroupCategory extends StatelessWidget {
   final String category;
   final Widget child;
+  final EdgeInsetsGeometry categoryPadding;
 
   const CustomGroupCategory({
     super.key,
     required this.category,
-    required this.child,
+    required this.child, this.categoryPadding = const EdgeInsets.all(20.0) ,
   });
 
   @override
@@ -17,7 +18,7 @@ class CustomGroupCategory extends StatelessWidget {
       children: [
         // Encabezado de la categoría
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: categoryPadding,
           child: Text(
             category.toUpperCase(),
             style: TextStyle(

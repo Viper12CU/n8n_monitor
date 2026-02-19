@@ -19,12 +19,16 @@ class WorfklowDetailsPage extends StatelessWidget {
 
       if (result != null) {
         debugPrint('Eliminar workflow con ID: $workflowId');
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
       }
       // Lógica para eliminar el workflow
     }
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text(
           'DETALLES DEL WORKFLOW',
           style: TextStyle(
@@ -34,7 +38,7 @@ class WorfklowDetailsPage extends StatelessWidget {
           ),
         ),
       ),
-      body: WorkflowDetailsTemplate(workflowId: workflowId),
+      body: SafeArea(child: WorkflowDetailsTemplate(workflowId: workflowId)),
       floatingActionButton: CustomSpeedDial(
         secondaryIconsList: [Icons.delete_rounded],
         secondaryIconsText: ["eliminar"],

@@ -107,16 +107,21 @@ class ExecutionsListTemplate extends StatelessWidget {
               final categoryExecutions = organizedExecutions[category]!;
               
               return CustomGroupCategory(
+                categoryPadding: EdgeInsetsGeometry.only(left: 20, bottom: 8, top: 20),
                 category: category,
-                child: Column(
-                  children: categoryExecutions.map((execution) {
-                    return ExecutionCard(
-                      workflow: execution['workflowName'] ?? 'Workflow ${execution['workflowId']}',
-                      status: execution['status'] ?? 'unknown',
-                      id: execution['id'] ?? '',
-                      date: execution['formattedTime'] ?? '',
-                    );
-                  }).toList(),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    spacing: 10.0,
+                    children: categoryExecutions.map((execution) {
+                      return ExecutionCard(
+                        workflow: execution['workflowName'] ?? 'Workflow ${execution['workflowId']}',
+                        status: execution['status'] ?? 'unknown',
+                        id: execution['id'] ?? '',
+                        date: execution['formattedTime'] ?? '',
+                      );
+                    }).toList(),
+                  ),
                 ),
               );
             },

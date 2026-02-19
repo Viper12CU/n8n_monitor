@@ -76,12 +76,11 @@ class _WorkflowCardState extends State<WorkflowCard> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
-        border: Border.all(color: Color(0xFF27352d)),
-        borderRadius: BorderRadius.circular(40.0),
+        borderRadius: BorderRadius.circular(18.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +125,6 @@ class _WorkflowCardState extends State<WorkflowCard> {
           ),
           SizedBox(height: 12),
           Divider(color: Color(0xFF27352d)),
-          SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -85,46 +85,43 @@ class _ConnectionSettingsFormState extends State<ConnectionSettingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        spacing: 5.0,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DividedCard(
-            children: [
-              CustomFormInputField(
-                label: 'URL del servidor',
-                icon: Icons.link,
-                controller: _urlController,
-                keyboardType: TextInputType.url,
-                hintText: 'https://tu-servidor.com',
-                submitedForm: () {},
-              ),
-              CustomFormInputField(
-                label: 'API Key',
-                icon: Icons.key,
-                controller: _apiKeyController,
-                isPassword: true,
-                hintText: 'Tu clave API',
-                submitedForm: () {},
-              ),
-            ],
-          ),
-          IgnorePointer(
-            ignoring: !_isModified || _isLoading,
-            child: Opacity(
-              opacity: _isModified && !_isLoading ? 1.0 : 0.5,
-              child: CustomButton(
-                label: 'Comprobar Conexión',
-                icon: Icons.electric_bolt_rounded,
-                onTap: _handleSave,
-                isLoading: _isLoading,
-              ),
+    return Column(
+      spacing: 5.0,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DividedCard(
+          children: [
+            CustomFormInputField(
+              label: 'URL del servidor',
+              icon: Icons.link,
+              controller: _urlController,
+              keyboardType: TextInputType.url,
+              hintText: 'https://tu-servidor.com',
+              submitedForm: () {},
+            ),
+            CustomFormInputField(
+              label: 'API Key',
+              icon: Icons.key,
+              controller: _apiKeyController,
+              isPassword: true,
+              hintText: 'Tu clave API',
+              submitedForm: () {},
+            ),
+          ],
+        ),
+        IgnorePointer(
+          ignoring: !_isModified || _isLoading,
+          child: Opacity(
+            opacity: _isModified && !_isLoading ? 1.0 : 0.5,
+            child: CustomButton(
+              label: 'Comprobar Conexión',
+              icon: Icons.electric_bolt_rounded,
+              onTap: _handleSave,
+              isLoading: _isLoading,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

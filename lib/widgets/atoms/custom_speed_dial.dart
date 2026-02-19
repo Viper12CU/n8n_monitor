@@ -85,9 +85,13 @@ class CustomSpeedDial extends StatefulWidget {
 class CustomSpeedDialState extends State<CustomSpeedDial>
     with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _animatedIconController;
 
   @override
   void initState() {
+    _animatedIconController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -189,29 +193,20 @@ class CustomSpeedDialState extends State<CustomSpeedDial>
             clipBehavior: Clip.antiAlias,
             backgroundColor: widget.primaryBackgroundColor,
             heroTag: null,
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (BuildContext context, Widget? child) {
-                return Transform(
-                  transform: Matrix4.rotationZ(
-                    _controller.value * (widget.rotateAngle),
-                  ),
-                  alignment: FractionalOffset.center,
-                  child: Icon(
-                    _controller.isDismissed
-                        ? widget.primaryIconExpand
-                        : widget.primaryIconCollapse,
-                    color: widget.primaryForegroundColor,
-                  ),
-                );
-              },
+            child: AnimatedIcon(
+              icon: AnimatedIcons.menu_close,
+              progress: _animatedIconController,
+              color: widget.primaryForegroundColor,
             ),
             onPressed: () {
               if (_controller.isDismissed) {
                 _controller.forward();
+                _animatedIconController.forward();
               } else {
                 _controller.reverse();
+                _animatedIconController.reverse();
               }
+             
             },
           ),
         ),

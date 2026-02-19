@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:n8n_monitor/utils/execution_helpers.dart';
 import 'package:n8n_monitor/widgets/pages/executions_details_page.dart';
 
 class ExecutionCard extends StatelessWidget {
@@ -15,54 +16,11 @@ class ExecutionCard extends StatelessWidget {
     required this.date,
   });
 
-  Map<String, dynamic> _getStatusConfig() {
-    switch (status.toLowerCase()) {
-      case 'success':
-      case 'éxito':
-        return {
-          'icon': Icons.check_circle,
-          'color': const Color(0xFF38e07b),
-          'label': 'Éxito',
-        };
-      case 'error':
-        return {
-          'icon': Icons.error,
-          'color': const Color(0xFFef4444),
-          'label': 'Error',
-        };
-      case 'canceled':
-      case 'cancelado':
-        return {
-          'icon': Icons.cancel,
-          'color': const Color(0xFFfbbf24),
-          'label': 'Cancelado',
-        };
-      case 'running':
-      case 'en ejecución':
-        return {
-          'icon': Icons.refresh,
-          'color': const Color(0xFF3b82f6),
-          'label': 'En ejecución',
-        };
-      case 'waiting':
-      case 'esperando':
-        return {
-          'icon': Icons.schedule,
-          'color': const Color(0xFF94a3b8),
-          'label': 'Esperando',
-        };
-      default:
-        return {
-          'icon': Icons.help_outline,
-          'color': const Color(0xFF94a3b8),
-          'label': status,
-        };
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
-    final statusConfig = _getStatusConfig();
+    final statusConfig = getStatusConfig(status);
 
     // Navegar a la página de detalles del ejecucion 
 
@@ -70,7 +28,7 @@ class ExecutionCard extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ExecutionsDetailsPage(workflowId: id),
+          builder: (context) => ExecutionsDetailsPage(executionId: id),
         ),
       );
     }
@@ -79,7 +37,6 @@ class ExecutionCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => navigateToDetails(), 
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 /// Organiza una lista de ejecuciones por fecha en categorías como "Hoy", "Ayer", etc.
@@ -98,3 +99,49 @@ String getWorkflowName(String workflowId) {
   // o un Map de workflowId -> nombre
   return 'Workflow $workflowId';
 }
+
+
+Map<String, dynamic> getStatusConfig(String status) {
+    switch (status) {
+      case 'success':
+      case 'éxito':
+        return {
+          'icon': Icons.check_circle,
+          'color': const Color(0xFF38e07b),
+          'label': 'Éxito',
+        };
+      case 'error':
+        return {
+          'icon': Icons.error,
+          'color': const Color(0xFFef4444),
+          'label': 'Error',
+        };
+      case 'canceled':
+      case 'cancelado':
+        return {
+          'icon': Icons.cancel,
+          'color': const Color(0xFFfbbf24),
+          'label': 'Cancelado',
+        };
+      case 'running':
+      case 'en ejecución':
+        return {
+          'icon': Icons.refresh,
+          'color': const Color(0xFF3b82f6),
+          'label': 'En ejecución',
+        };
+      case 'waiting':
+      case 'esperando':
+        return {
+          'icon': Icons.schedule,
+          'color': const Color(0xFF94a3b8),
+          'label': 'Esperando',
+        };
+      default:
+        return {
+          'icon': Icons.help_outline,
+          'color': const Color(0xFF94a3b8),
+          'label': status,
+        };
+    }
+  }

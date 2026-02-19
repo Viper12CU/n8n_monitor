@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class SingleInfoContainer extends StatelessWidget {
   final String title;
-  final String info;
-  const SingleInfoContainer({super.key, required this.title, required this.info});
+  final Widget child;
+  const SingleInfoContainer({super.key, required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +27,7 @@ class SingleInfoContainer extends StatelessWidget {
               ),
           ),
           SizedBox(height: 8),
-          Text(
-            info,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
+         child
         ],
       ),
     );

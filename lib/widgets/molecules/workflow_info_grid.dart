@@ -18,11 +18,25 @@ class WorkflowInfoGrid extends StatelessWidget {
       children: [
         SingleInfoContainer(
           title: "Fecha de creación",
-          info: "2024-06-15 14:30",
+          child:  Text(
+            "2024-06-15 14:30",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
         ),
         SingleInfoContainer(
           title: "Fecha de creación",
-          info: "2024-06-15 14:30",
+          child:  Text(
+            "2024-06-15 14:30",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
         ),
       ],
     );
