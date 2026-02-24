@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:n8n_monitor/services/local_storage.dart';
+import 'package:n8n_monitor/api/http_client.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_snackbar.dart';
+import 'package:n8n_monitor/utils/enums.dart';
 
 class InitialConfFormProvider extends ChangeNotifier {
   final TextEditingController _urlController = TextEditingController();
@@ -24,25 +28,44 @@ class InitialConfFormProvider extends ChangeNotifier {
         String url = urlController.text;
         String apiKey = apiKeyController.text;
 
-        await Future.delayed(const Duration(seconds: 6));
+        // Probar la conexión antes de guardar
+        final isConnected = await HttpClient.testConnection(
+          baseUrl: url,
+          apiKey: apiKey,
+        );
 
-        debugPrint("URL: $url");
-        debugPrint("API Key: $apiKey");
+        if (!isConnected) {
+          throw ErrorDescription("Error en al probar conexión");
+        }
+
+        // Si la conexión es exitosa, guardar en LocalStorage
+        LocalStorage.setUrl(url);
+        LocalStorage.setApiKey(apiKey);
 
         if (context.mounted) {
+          CustomSnackbar.show(
+            context: context,
+            message: 'Conexión exitosa',
+            type: SnackbarType.success,
+          );
+
           Navigator.pushReplacementNamed(context, '/homePage');
         }
       } else {
-        throw ErrorDescription("Error en el Login");
+        throw ErrorDescription("Error al validar");
       }
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("ERROR: $e");
+      if (context.mounted) {
+        CustomSnackbar.show(
+          context: context,
+          message: 'Error de conexión. Verifica la URL y API key',
+          type: SnackbarType.error,
+        );
+      }
     } finally {
       _loadingSendData = false;
       notifyListeners();
-
-      urlController.clear();
-      apiKeyController.clear();
     }
   }
 }

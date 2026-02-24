@@ -1,98 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:n8n_monitor/widgets/atoms/workflow_card.dart';
 import 'package:n8n_monitor/widgets/molecules/workflows_filter.dart';
+import 'package:n8n_monitor/api/workflows.dart';
 
-class WorkflowsListTemplate extends StatelessWidget {
+class WorkflowsListTemplate extends StatefulWidget {
   const WorkflowsListTemplate({super.key});
 
   // Lista estática de 10 workflows
-  static final List<Map<String, dynamic>> _workflows = [
-    {
-      'id': 'wf001',
-      'workflowName': 'Procesamiento de Órdenes',
-      'initialStatus': true,
-      'lastUpdate': 'Hace 10 minutos',
-    },
-    {
-      'id': 'wf002',
-      'workflowName': 'Sincronización CRM',
-      'initialStatus': true,
-      'lastUpdate': 'Hace 1 hora',
-    },
-    {
-      'id': 'wf003',
-      'workflowName': 'Notificaciones Email',
-      'initialStatus': false,
-      'lastUpdate': 'Hace 2 días',
-    },
-    {
-      'id': 'wf004',
-      'workflowName': 'Backup Automático',
-      'initialStatus': true,
-      'lastUpdate': 'Hace 30 minutos',
-    },
-    {
-      'id': 'wf005',
-      'workflowName': 'Generación de Reportes',
-      'initialStatus': true,
-      'lastUpdate': 'Hace 3 horas',
-    },
-    {
-      'id': 'wf006',
-      'workflowName': 'Monitor de Inventario',
-      'initialStatus': false,
-      'lastUpdate': 'Hace 1 semana',
-    },
-    {
-      'id': 'wf007',
-      'workflowName': 'Integración Slack',
-      'initialStatus': true,
-      'lastUpdate': 'Hace 5 minutos',
-    },
-    {
-      'id': 'wf008',
-      'workflowName': 'API Gateway Principal',
-      'initialStatus': true,
-      'lastUpdate': 'Hace 15 minutos',
-    },
-    {
-      'id': 'wf009',
-      'workflowName': 'Análisis de Datos',
-      'initialStatus': true,
-      'lastUpdate': 'Hace 45 minutos',
-    },
-    {
-      'id': 'wf010',
-      'workflowName': 'Limpieza de Logs',
-      'initialStatus': false,
-      'lastUpdate': 'Hace 3 días',
-    },
-  ];
+
+  @override
+  State<WorkflowsListTemplate> createState() => _WorkflowsListTemplateState();
+}
+
+class _WorkflowsListTemplateState extends State<WorkflowsListTemplate> {
+  late Map<String, dynamic> _workflows;
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWorkflows();
+  }
+
+  Future<void> _loadWorkflows() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final workflows = await getWorkflow();
+      debugPrint("Workflows obtenidos: $workflows");
+
+      if (workflows != null) {
+        setState(() {
+          _workflows = workflows;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'Workflow no encontrado';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error al cargar workflows: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        WorkflowsFilter(),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: _workflows.length,
-            itemBuilder: (context, index) {
-              final workflow = _workflows[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: WorkflowCard(
-                  id: workflow['id'],
-                  workflowName: workflow['workflowName'],
-                  initialStatus: workflow['initialStatus'],
-                  lastUpdate: workflow['lastUpdate'],
-                ),
-              );
-            },
-          ),
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                _errorMessage!,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadWorkflows,
+              child: const Text('Reintentar'),
+            ),
+          ],
         ),
-      ],
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () =>  _loadWorkflows(),
+      child: Column(
+        children: [
+          WorkflowsFilter(),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: _workflows["data"].length,
+              itemBuilder: (context, index) {
+                final workflow = _workflows["data"][index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: WorkflowCard(
+                    id: workflow['id'],
+                    workflowName: workflow['name'],
+                    initialStatus: workflow['active'] ?? false,
+                    lastUpdate: workflow['updatedAt'] ?? '',
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

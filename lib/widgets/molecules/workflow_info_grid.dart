@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:n8n_monitor/widgets/atoms/single_info_container.dart';
 
 class WorkflowInfoGrid extends StatelessWidget {
-  const WorkflowInfoGrid({super.key});
+  final String createdAt;
+  final String updatedAt;
+  const WorkflowInfoGrid({
+    super.key,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   @override
   Widget build(BuildContext context) {
+    String formatDate(String isoDate) {
+      try {
+        final dateTime = DateTime.parse(isoDate);
+        final formatter = DateFormat('dd-MM-yyyy HH:mm');
+        return formatter.format(dateTime);
+      } catch (e) {
+        return isoDate; // Retorna la fecha original si hay error
+      }
+    }
+
     return GridView(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -17,9 +34,9 @@ class WorkflowInfoGrid extends StatelessWidget {
       physics: NeverScrollableScrollPhysics(),
       children: [
         SingleInfoContainer(
-          title: "Fecha de creación",
-          child:  Text(
-            "2024-06-15 14:30",
+          title: "Creado el",
+          child: Text(
+            formatDate(createdAt),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -28,9 +45,9 @@ class WorkflowInfoGrid extends StatelessWidget {
           ),
         ),
         SingleInfoContainer(
-          title: "Fecha de creación",
-          child:  Text(
-            "2024-06-15 14:30",
+            title: "Actualizado",
+          child: Text(
+            formatDate(updatedAt),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,

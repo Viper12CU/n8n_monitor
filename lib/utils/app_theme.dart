@@ -32,6 +32,7 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     primaryColor: primaryColor,
     colorScheme: ColorScheme.dark(
+      error: Colors.red,
       primary: primaryColor,
       secondary: Color(0xFF1c2b22),
       onSecondary: Color(0xFF38e07b),

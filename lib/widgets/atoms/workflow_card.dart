@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:n8n_monitor/widgets/molecules/confirmation_dialog.dart';
 import 'package:n8n_monitor/widgets/pages/worfklow_details_page.dart';
 
@@ -63,6 +64,16 @@ class _WorkflowCardState extends State<WorkflowCard> {
     }
   }
 
+   String formatDate(String isoDate) {
+    try {
+      final dateTime = DateTime.parse(isoDate);
+      final formatter = DateFormat('dd-MM-yyyy HH:mm');
+      return formatter.format(dateTime);
+    } catch (e) {
+      return isoDate; // Retorna la fecha original si hay error
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //Navegar a detalles del workflow
@@ -93,9 +104,13 @@ class _WorkflowCardState extends State<WorkflowCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    widget.workflowName,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  SizedBox(
+                    width: 200,
+                    child: Text(
+                      overflow: TextOverflow.clip,
+                      widget.workflowName,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   SizedBox(height: 4),
                   Row(
@@ -129,7 +144,7 @@ class _WorkflowCardState extends State<WorkflowCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Última actualización: ${widget.lastUpdate}',
+                'Última actualización: ${formatDate(widget.lastUpdate)}',
                 style: TextStyle(color: Colors.grey[400], fontSize: 13),
               ),
               IconButton(

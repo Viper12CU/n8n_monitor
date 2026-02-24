@@ -6,7 +6,7 @@ import 'package:n8n_monitor/widgets/atoms/custom_button.dart';
 class ConnectionSettingsForm extends StatefulWidget {
   final String initialUrl;
   final String initialApiKey;
-  final Function(String url, String apiKey)? onSave;
+  final Future<void> Function(String url, String apiKey)? onSave;
 
   const ConnectionSettingsForm({
     super.key,
@@ -55,16 +55,8 @@ class _ConnectionSettingsFormState extends State<ConnectionSettingsForm> {
         _isLoading = true;
       });
 
-      // Simulación de carga
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Lógica para guardar los cambios
-      print('Guardando cambios...');
-      print('URL: ${_urlController.text}');
-      print('API Key: ${_apiKeyController.text}');
-
       if (widget.onSave != null) {
-        widget.onSave!(_urlController.text, _apiKeyController.text);
+        await widget.onSave!(_urlController.text, _apiKeyController.text);
       }
 
       setState(() {
