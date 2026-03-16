@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:n8n_monitor/api/workflows.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_switch.dart';
+import 'package:n8n_monitor/utils/enums.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_snackbar.dart';
 import 'package:n8n_monitor/widgets/molecules/confirmation_dialog.dart';
 
 class WorkflowDataCard extends StatefulWidget {
@@ -7,6 +12,7 @@ class WorkflowDataCard extends StatefulWidget {
   final String workflowId;
   final String? workflowDescription;
   final List<String>? workflowTags;
+  final VoidCallback? onWorkflowStatusChanged;
   const WorkflowDataCard({
     super.key,
     required this.workflowStatus,
@@ -14,6 +20,7 @@ class WorkflowDataCard extends StatefulWidget {
     required this.workflowId,
     this.workflowTags,
     this.workflowDescription,
+    this.onWorkflowStatusChanged,
   });
 
   @override
@@ -22,14 +29,36 @@ class WorkflowDataCard extends StatefulWidget {
 
 class _WorkflowDataCardState extends State<WorkflowDataCard> {
   late bool isActive;
+  late ValueNotifier<bool> _switchController;
+  bool _isUpdatingStatus = false;
 
   @override
   void initState() {
     super.initState();
     isActive = widget.workflowStatus.toLowerCase() == "active";
+    _switchController = ValueNotifier<bool>(isActive);
+  }
+
+  @override
+  void didUpdateWidget(covariant WorkflowDataCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.workflowStatus != widget.workflowStatus) {
+      isActive = widget.workflowStatus.toLowerCase() == "active";
+      _switchController.value = isActive;
+    }
+  }
+
+  @override
+  void dispose() {
+    _switchController.dispose();
+    super.dispose();
   }
 
   void handleSwitch(bool value) async {
+    if (_isUpdatingStatus) return;
+
+    final previousValue = isActive;
+
     if (value == true) {
       // Mostrar dialog de confirmación cuando se activa
       final result = await ConfirmationDialog.show(
@@ -39,14 +68,51 @@ class _WorkflowDataCardState extends State<WorkflowDataCard> {
         showNameField: true,
         showDescriptionField: true,
         showVersionIdField: true,
+        initialName: widget.workflowName,
+        initialDescription: widget.workflowDescription,
       );
 
       // Solo cambiar el estado si el usuario confirmó
       if (result != null) {
-        debugPrint('Datos recibidos: $result');
         setState(() {
-          isActive = value;
+          _isUpdatingStatus = true;
         });
+
+        final fields = result['field_data'] as Map<String, dynamic>? ?? {};
+        final response = await activateWorkflow(
+          widget.workflowId,
+          name: fields['name'] as String?,
+          description: fields['description'] as String?,
+          versionId: fields['versionId'] as String?,
+        );
+
+        if (!mounted) return;
+
+        if (response['error'] == null) {
+          CustomSnackbar.show(
+            context: context,
+            message: 'Workflow activado correctamente',
+            type: SnackbarType.success,
+          );
+          setState(() {
+            isActive = true;
+          });
+          _switchController.value = true;
+          widget.onWorkflowStatusChanged?.call();
+        } else {
+          CustomSnackbar.show(
+            context: context,
+            message: response['error'].toString(),
+            type: SnackbarType.error,
+          );
+          _switchController.value = previousValue;
+        }
+
+        setState(() {
+          _isUpdatingStatus = false;
+        });
+      } else {
+        _switchController.value = previousValue;
       }
     } else {
       // Desactivar sin confirmación
@@ -57,10 +123,39 @@ class _WorkflowDataCardState extends State<WorkflowDataCard> {
         message: '¿Estás seguro de que deseas desactivar este workflow?',
       );
       if (result != null) {
-        debugPrint('Datos recibidos: $result');
         setState(() {
-          isActive = value;
+          _isUpdatingStatus = true;
         });
+
+        final response = await deactivateWorkflow(widget.workflowId);
+
+        if (!mounted) return;
+
+        if (response['error'] == null) {
+          CustomSnackbar.show(
+            context: context,
+            message: 'Workflow desactivado correctamente',
+            type: SnackbarType.success,
+          );
+          setState(() {
+            isActive = false;
+          });
+          _switchController.value = false;
+          widget.onWorkflowStatusChanged?.call();
+        } else {
+          CustomSnackbar.show(
+            context: context,
+            message: response['error'].toString(),
+            type: SnackbarType.error,
+          );
+          _switchController.value = previousValue;
+        }
+
+        setState(() {
+          _isUpdatingStatus = false;
+        });
+      } else {
+        _switchController.value = previousValue;
       }
     }
   }
@@ -252,7 +347,20 @@ class _WorkflowDataCardState extends State<WorkflowDataCard> {
             ),
           ],
         ),
-        Switch(value: isActive, onChanged: (value) => handleSwitch(value)),
+        _isUpdatingStatus
+            ? const SizedBox(
+                width: 38,
+                height: 38,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: CustomLoader(variant: LoaderVariant.light),
+                ),
+              )
+            : CustomSwitch(
+              initialValue: isActive,
+                controller: _switchController,
+                onChanged: handleSwitch,
+              ),
       ],
     );
   }

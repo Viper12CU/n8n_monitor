@@ -42,10 +42,11 @@ Map<String, List<Map<String, dynamic>>> organizeExecutionsByDate(
       'startedAt': execution['startedAt'],
       'stoppedAt': execution['stoppedAt'],
       'workflowId': execution['workflowId'],
+      'workflowName': execution['workflowName'], // ✅ Agregar workflowName
       'waitTill': execution['waitTill'],
       // Datos adicionales formateados
       'formattedDate': DateFormat('dd/MM/yyyy').format(executionDate),
-      'formattedTime': DateFormat('HH:mm').format(executionDate),
+      'formattedTime': execution['formattedTime'] ?? DateFormat('HH:mm').format(executionDate),
       'formattedDateTime': DateFormat('dd/MM/yyyy HH:mm').format(executionDate),
     };
 

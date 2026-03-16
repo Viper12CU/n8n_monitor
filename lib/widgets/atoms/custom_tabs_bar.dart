@@ -11,7 +11,7 @@ class CustomTabsBar extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 40.0,
       child: FlutterTabBarLite.horizontal(
-        scrollable: false,
+        scrollable: true,
         animateItemSize: false,
         titles: titles,
         borderRadius: 30.0,

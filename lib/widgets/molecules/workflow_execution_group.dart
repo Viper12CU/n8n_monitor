@@ -15,10 +15,10 @@ class WorkflowExecutionGroup extends StatelessWidget {
         spacing: 10.0,
         children: workflowExecutions.map((execution) {
           return ExecutionCard(
-            workflow: execution["workflowName"],
-            status: execution["status"],
-            id: execution["id"],
-            date: "10:20",
+            workflow: execution["workflowName"] ?? 'Workflow desconocido',
+            status: execution["status"] ?? 'unknown',
+            id: execution["id"] ?? '',
+            date: execution["formattedTime"] ?? 'N/A',
           );
         }).toList(),
       ),

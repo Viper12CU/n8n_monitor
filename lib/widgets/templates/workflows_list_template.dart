@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:n8n_monitor/provider/workflow_filter_provider.dart';
+import 'package:n8n_monitor/utils/enums.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
 import 'package:n8n_monitor/widgets/atoms/workflow_card.dart';
+import 'package:n8n_monitor/widgets/atoms/error_message.dart';
 import 'package:n8n_monitor/widgets/molecules/workflows_filter.dart';
 import 'package:n8n_monitor/api/workflows.dart';
 
@@ -29,24 +34,21 @@ class _WorkflowsListTemplateState extends State<WorkflowsListTemplate> {
       _errorMessage = null;
     });
 
-    try {
-      final workflows = await getWorkflow();
-      debugPrint("Workflows obtenidos: $workflows");
+    final response = await getWorkflow();
 
-      if (workflows != null) {
-        setState(() {
-          _workflows = workflows;
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _errorMessage = 'Workflow no encontrado';
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
+    if (response['error'] != null) {
       setState(() {
-        _errorMessage = 'Error al cargar workflows: $e';
+        _errorMessage = response['error'];
+        _isLoading = false;
+      });
+    } else if (response['data'] != null) {
+      setState(() {
+        _workflows = response['data'];
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _errorMessage = 'No se pudieron cargar los workflows';
         _isLoading = false;
       });
     }
@@ -55,50 +57,71 @@ class _WorkflowsListTemplateState extends State<WorkflowsListTemplate> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CustomLoader(variant: LoaderVariant.light));
     }
 
     if (_errorMessage != null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadWorkflows,
-              child: const Text('Reintentar'),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ErrorMessage(
+            errorLabel: 'Error al cargar workflows',
+            description: _errorMessage!,
+            onRetry: _loadWorkflows,
+          ),
         ),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () =>  _loadWorkflows(),
+      onRefresh: () => _loadWorkflows(),
       child: Column(
         children: [
-          WorkflowsFilter(),
+          const WorkflowsFilter(),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: _workflows["data"].length,
-              itemBuilder: (context, index) {
-                final workflow = _workflows["data"][index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: WorkflowCard(
-                    id: workflow['id'],
-                    workflowName: workflow['name'],
-                    initialStatus: workflow['active'] ?? false,
-                    lastUpdate: workflow['updatedAt'] ?? '',
-                  ),
+            child: Consumer<WorkflowFilterProvider>(
+              builder: (context, filterProvider, child) {
+                // Obtener la lista completa de workflows
+                final allWorkflows = _workflows["data"] as List<dynamic>;
+
+                // Aplicar el filtro usando el provider
+                final filteredWorkflows = filterProvider.filterWorkflows(
+                  allWorkflows,
+                );
+
+                // Si no hay workflows después del filtro, mostrar mensaje
+                if (filteredWorkflows.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'No hay workflows ${filterProvider.currentFilterLabel.toLowerCase()}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: filteredWorkflows.length,
+                  itemBuilder: (context, index) {
+                    final workflow = filteredWorkflows[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: WorkflowCard(
+                        key: Key(workflow['id']),
+                        id: workflow['id'],
+                        workflowName: workflow['name'],
+                        initialStatus: workflow['active'] ?? false,
+                        lastUpdate: workflow['updatedAt'] ?? '',
+                        onWorkflowDeleted: _loadWorkflows,
+                      ),
+                    );
+                  },
                 );
               },
             ),

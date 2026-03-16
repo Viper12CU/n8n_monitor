@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:n8n_monitor/provider/execution_filter_provider.dart';
+import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/filter_button.dart';
 
 class ExecutionsFilter extends StatefulWidget {
@@ -15,33 +18,68 @@ class _ExecutionsFilterState extends State<ExecutionsFilter> {
     {
       'icon': const Icon(Icons.grid_view_rounded, color: Colors.white),
       'label': 'Todos',
+      'type': ExecutionFilterType.all,
     },
     {
       'icon': const Icon(Icons.cancel, color: Color(0xFFfbbf24)),
       'label': 'Cancelado',
+      'type': ExecutionFilterType.canceled,
     },
     {
       'icon': const Icon(Icons.error, color: Color(0xFFef4444)),
       'label': 'Error',
+      'type': ExecutionFilterType.error,
     },
     {
       'icon': const Icon(Icons.refresh, color: Color(0xFF3b82f6)),
       'label': 'En ejecución',
+      'type': ExecutionFilterType.running,
     },
     {
       'icon': const Icon(Icons.check_circle, color: Color(0xFF38e07b)),
       'label': 'Éxito',
+      'type': ExecutionFilterType.success,
     },
     {
       'icon': const Icon(Icons.schedule, color: Color(0xFF94a3b8)),
       'label': 'Esperando',
+      'type': ExecutionFilterType.waiting,
     },
   ];
 
   int activeIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Sincronizar el activeIndex con el filtro actual del provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final filterProvider = Provider.of<ExecutionFilterProvider>(context, listen: false);
+      final currentFilter = filterProvider.currentFilter;
+      
+      // Buscar el índice del filtro actual en la lista
+      final index = filters.indexWhere((filter) => filter['type'] == currentFilter);
+      
+      if (index != -1 && index != activeIndex) {
+        setState(() {
+          // Reorganizar la lista para que el filtro activo esté en la posición 0
+          final selectedFilter = filters[index];
+          filters.removeAt(index);
+          filters.insert(0, selectedFilter);
+          activeIndex = 0;
+        });
+      }
+    });
+  }
+
   void handleFilterPress(int index) {
     if (index != activeIndex) {
+      final filterProvider = Provider.of<ExecutionFilterProvider>(context, listen: false);
+      final selectedFilter = filters[index];
+      
+      // Actualizar el provider con el nuevo filtro
+      filterProvider.setFilter(selectedFilter['type']);
+      
       setState(() {
         final selectedFilter = filters[index];
         

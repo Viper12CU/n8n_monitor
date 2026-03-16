@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:n8n_monitor/provider/workflow_filter_provider.dart';
+import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/filter_button.dart';
 
 class WorkflowsFilter extends StatefulWidget {
@@ -15,24 +18,54 @@ class _WorkflowsFilterState extends State<WorkflowsFilter> {
     {
       'icon': const Icon(Icons.grid_view_rounded, color:   Colors.white,),
       'label': 'Todos',
+      'type': WorkflowFilterType.all,
     },
     {
       'icon': const Icon(Icons.play_circle_fill, color:  Color(0xFF38e07b),),
       'label': 'Activos',
+      'type': WorkflowFilterType.active,
     },
     {
       'icon': const Icon(Icons.pause_circle_filled, color:  Color(0xFF94a3b8)),
       'label': 'Inactivos',
+      'type': WorkflowFilterType.inactive,
     },
   ];
 
   int activeIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Sincronizar el activeIndex con el filtro actual del provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final filterProvider = Provider.of<WorkflowFilterProvider>(context, listen: false);
+      final currentFilter = filterProvider.currentFilter;
+      
+      // Buscar el índice del filtro actual en la lista
+      final index = filters.indexWhere((filter) => filter['type'] == currentFilter);
+      
+      if (index != -1 && index != activeIndex) {
+        setState(() {
+          // Reorganizar la lista para que el filtro activo esté en la posición 0
+          final selectedFilter = filters[index];
+          filters.removeAt(index);
+          filters.insert(0, selectedFilter);
+          activeIndex = 0;
+        });
+      }
+    });
+  }
+
   void handleFilterPress(int index) {
     if (index != activeIndex) {
+      final filterProvider = Provider.of<WorkflowFilterProvider>(context, listen: false);
+      final selectedFilter = filters[index];
+      
+      // Actualizar el provider con el nuevo filtro
+      filterProvider.setFilter(selectedFilter['type']);
+      
       setState(() {
-        final selectedFilter = filters[index];
-        
         // Remover con animación
         _listKey.currentState?.removeItem(
           index,

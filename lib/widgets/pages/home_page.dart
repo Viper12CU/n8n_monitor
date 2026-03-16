@@ -3,6 +3,7 @@ import 'package:n8n_monitor/provider/nav_index_provider.dart';
 import 'package:n8n_monitor/provider/server_status_animation_provider.dart';
 import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/appbar_server_status.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_speed_dial.dart';
 import 'package:n8n_monitor/widgets/molecules/nav_bar.dart';
 import 'package:n8n_monitor/widgets/templates/dashboard_template.dart';
 import 'package:n8n_monitor/widgets/templates/executions_list_template.dart';
@@ -31,7 +32,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: appBar(context, indexProvider.selectedIndex),
-      body: IndexedStack(index: indexProvider.selectedIndex, children: templates),
+      body: IndexedStack(
+        index: indexProvider.selectedIndex,
+        children: templates,
+      ),
       bottomNavigationBar: NavBar(),
     );
   }

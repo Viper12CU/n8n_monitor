@@ -1,19 +1,45 @@
-import 'package:hive/hive.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheService {
-  final Box box = Hive.box('cache');
+  static const String _auditCacheKey = 'audit_cache';
+  static const String _auditDateKey = 'audit_cache_date';
 
-  Map<String, dynamic>? getData() {
-    final data = box.get('api_cache');
+  Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
+
+  /// Guarda el resultado de la auditoría en caché
+  Future<void> saveAuditData(
+    Map<String, dynamic> auditJson, {
+    DateTime? auditDate,
+  }) async {
+    final prefs = await _prefs;
+    await prefs.setString(_auditCacheKey, json.encode(auditJson));
+    await prefs.setString(
+      _auditDateKey,
+      (auditDate ?? DateTime.now()).toIso8601String(),
+    );
+  }
+
+  /// Carga el resultado de la última auditoría del caché
+  Future<Map<String, dynamic>?> getAuditData() async {
+    final prefs = await _prefs;
+    final data = prefs.getString(_auditCacheKey);
     if (data == null) return null;
-    return Map<String, dynamic>.from(data);
+    return json.decode(data) as Map<String, dynamic>;
   }
 
-  Future<void> saveData(Map<String, dynamic> json) async {
-    await box.put('api_cache', json);
+  /// Devuelve la fecha de la última auditoría guardada en caché
+  Future<DateTime?> getAuditDate() async {
+    final prefs = await _prefs;
+    final dateString = prefs.getString(_auditDateKey);
+    if (dateString == null) return null;
+    return DateTime.tryParse(dateString);
   }
 
-  Future<void> clear() async {
-    await box.delete('api_cache');
+  /// Elimina los datos de auditoría del caché
+  Future<void> clearAuditData() async {
+    final prefs = await _prefs;
+    await prefs.remove(_auditCacheKey);
+    await prefs.remove(_auditDateKey);
   }
 }

@@ -19,6 +19,18 @@ class LocalStorage {
     await _preferences?.setString("n8nApiKey", value);
   }
 
+  static String? get workflowFilter => _preferences?.getString("workflowFilter");
+
+  static Future setWorkflowFilter(String value) async {
+    await _preferences?.setString("workflowFilter", value);
+  }
+
+  static String? get executionFilter => _preferences?.getString("executionFilter");
+
+  static Future setExecutionFilter(String value) async {
+    await _preferences?.setString("executionFilter", value);
+  }
+
   static void clearStorage() {
     _preferences?.clear();
   }

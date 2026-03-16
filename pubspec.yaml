@@ -47,7 +47,6 @@ dependencies:
   animated_icon: ^0.0.9
   flutter_tabbar_lite: ^0.0.6
   accordion: ^2.6.0
-  hive: ^2.2.3
   http: ^1.6.0
 
 dev_dependencies:

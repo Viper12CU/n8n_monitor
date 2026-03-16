@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:n8n_monitor/utils/execution_helpers.dart';
+import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_group_category.dart';
 import 'package:n8n_monitor/widgets/atoms/workflow_card.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
 import 'package:n8n_monitor/widgets/molecules/execution_info_grid.dart';
+import 'package:n8n_monitor/api/executions.dart';
+import 'package:n8n_monitor/api/workflows.dart';
 
 class ExecutionsDetailsTemplate extends StatefulWidget {
   final String executionId;
@@ -14,43 +19,128 @@ class ExecutionsDetailsTemplate extends StatefulWidget {
 }
 
 class _ExecutionsDetailsTemplateState extends State<ExecutionsDetailsTemplate> {
-  bool showName = false;
+  Map<String, dynamic>? _execution;
+  Map<String, dynamic>? _workflow;
+  bool _isLoading = true;
+  String? _errorMessage;
 
-  void handleTap() {
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExecutionData();
+  }
+
+  Future<void> _loadExecutionData() async {
     setState(() {
-      showName = !showName;
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final executionResponse = await getExecutionById(widget.executionId);
+
+    if (executionResponse['error'] != null) {
+      setState(() {
+        _errorMessage = executionResponse['error'];
+        _isLoading = false;
+      });
+      return;
+    } else if (executionResponse['data'] == null) {
+      setState(() {
+        _errorMessage = 'No se pudo cargar la ejecución';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    final execution = executionResponse['data'];
+    final workflowId = execution['workflowId'];
+
+    // Cargar el workflow en paralelo si existe workflowId
+    Map<String, dynamic>? workflow;
+    if (workflowId != null) {
+      final workflowResponse = await getWorkflowById(workflowId);
+      if (workflowResponse['error'] == null && workflowResponse['data'] != null) {
+        workflow = workflowResponse['data'];
+      }
+    }
+
+    setState(() {
+      _execution = execution;
+      _workflow = workflow;
+      _isLoading = false;
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-    const Map<String, dynamic> execution = {
-      "id": "303",
-      "finished": true,
-      "mode": "trigger",
-      "status": "success",
-      "startedAt": "2024-06-15 14:30",
-      "stoppedAt": "2024-06-15 14:32",
-      "workflowId": "stu901",
-      "workflowName": "Archive Data from tu amdre",
-    };
+    if (_isLoading) {
+      return const Center(child: CustomLoader(variant: LoaderVariant.light));
+    }
 
-    final statusConfig = getStatusConfig(execution['status']);
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                _errorMessage!,
+                style: const TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadExecutionData,
+              child: const Text('Reintentar'),
+            ),
+          ],
+        ),
+      );
+    }
 
-    return Padding(
-      padding: EdgeInsets.all(12.0),
-      child: Column(
-        spacing: 20.0,
-        children: [
-          nameCard(context, execution, statusConfig),
-          ExecutionInfoGrid(
-            mode: execution['mode'],
-            executionId: execution['id'],
-            startedAt: execution['startedAt'],
-            stoppedAt: execution['stoppedAt'],
-          ),
-          CustomGroupCategory(category: "WORKFLOW ASOCIADO", child: WorkflowCard(id: "2FSSFG", workflowName: "Archive data", initialStatus: true, lastUpdate: "Hace 10 min"))
-        ],
+    final execution = _execution!;
+    final statusConfig = getStatusConfig(execution['status'] ?? 'unknown');
+
+     String formatDate(String isoDate) {
+    try {
+      final dateTime = DateTime.parse(isoDate);
+      final formatter = DateFormat('dd-MM-yyyy HH:mm');
+      return formatter.format(dateTime);
+    } catch (e) {
+      return isoDate; // Retorna la fecha original si hay error
+    }
+  }
+
+    return RefreshIndicator(
+      onRefresh: _loadExecutionData,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(12.0),
+        child: Column(
+          spacing: 20.0,
+          children: [
+            nameCard(context, execution, statusConfig),
+            ExecutionInfoGrid(
+              mode: execution['mode'] ?? 'unknown',
+              executionId: execution['id'] ?? '',
+              startedAt: formatDate(execution['startedAt'] ?? 'N/A'),
+              stoppedAt: formatDate(execution['stoppedAt'] ?? 'N/A'),
+            ),
+            if (execution['workflowId'] != null)
+              CustomGroupCategory(
+                category: "WORKFLOW ASOCIADO",
+                child: WorkflowCard(
+                  id: execution['workflowId'],
+                  workflowName: _workflow?['name'] ?? 'Workflow ${execution['workflowId']}',
+                  initialStatus: _workflow?['active'] ?? false,
+                  lastUpdate: _workflow?['updatedAt'] ?? 'N/A',
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -70,17 +160,13 @@ class _ExecutionsDetailsTemplateState extends State<ExecutionsDetailsTemplate> {
             children: [
               SizedBox(
                 width: 200,
-                child: GestureDetector(
-                  onDoubleTap: () => handleTap(),
-                  child: Text(
-                    execution['workflowName'],
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      overflow: showName
-                          ? TextOverflow.fade
-                          : TextOverflow.ellipsis,
-                    ),
+                child: Text(
+                  _workflow?['name'] ?? 'Workflow ${execution['workflowId']}',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.fade
+                        
                   ),
                 ),
               ),
@@ -94,7 +180,7 @@ class _ExecutionsDetailsTemplateState extends State<ExecutionsDetailsTemplate> {
             padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25.0),
-              border: Border.all(color: statusConfig['color']),
+              border: Border.all(color: statusConfig['color'], width: 1.5),
             ),
             child: Row(
               spacing: 5,

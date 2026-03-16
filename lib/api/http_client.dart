@@ -10,9 +10,7 @@ class HttpClient {
 
   // Obtener headers con API key
   Map<String, String> _getHeaders({Map<String, String>? additionalHeaders}) {
-    final headers = {
-      'Accept': 'application/json',
-    };
+    final headers = {'Accept': 'application/json'};
 
     final apiKey = LocalStorage.apiKey;
     if (apiKey != null && apiKey.isNotEmpty) {
@@ -46,6 +44,9 @@ class HttpClient {
   }) async {
     final uri = _buildUri(endpoint);
     final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    if (body != null && !mergedHeaders.containsKey('Content-Type')) {
+      mergedHeaders['Content-Type'] = 'application/json';
+    }
 
     return await http.post(
       uri,
@@ -62,6 +63,9 @@ class HttpClient {
   }) async {
     final uri = _buildUri(endpoint);
     final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    if (body != null && !mergedHeaders.containsKey('Content-Type')) {
+      mergedHeaders['Content-Type'] = 'application/json';
+    }
 
     return await http.put(
       uri,
@@ -89,6 +93,9 @@ class HttpClient {
   }) async {
     final uri = _buildUri(endpoint);
     final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    if (body != null && !mergedHeaders.containsKey('Content-Type')) {
+      mergedHeaders['Content-Type'] = 'application/json';
+    }
 
     return await http.patch(
       uri,
@@ -111,14 +118,11 @@ class HttpClient {
   }) async {
     try {
       final uri = Uri.parse('$baseUrl/api/v1/users');
-      final headers = {
-        'Accept': 'application/json',
-        'x-n8n-api-key': apiKey,
-      };
+      final headers = {'Accept': 'application/json', 'x-n8n-api-key': apiKey};
 
-      final response = await http.get(uri, headers: headers).timeout(
-        const Duration(seconds: 10),
-      );
+      final response = await http
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 10));
 
       // Verificar si la respuesta es exitosa (200-299)
       return response.statusCode >= 200 && response.statusCode < 300;
