@@ -8,9 +8,10 @@ import 'package:n8n_monitor/widgets/atoms/custom_snackbar.dart';
 import 'package:n8n_monitor/widgets/molecules/audit_options_card.dart';
 import 'package:n8n_monitor/widgets/molecules/confirmation_dialog.dart';
 import 'package:n8n_monitor/widgets/molecules/connection_settings_form.dart';
+import 'package:n8n_monitor/widgets/molecules/tags_options_card.dart';
 
-class SettingsTemplate extends StatelessWidget {
-  const SettingsTemplate({super.key});
+class ToolsTemplate extends StatelessWidget {
+  const ToolsTemplate({super.key});
 
   Future<void> _handleTestApi(
     BuildContext context,
@@ -69,6 +70,10 @@ class SettingsTemplate extends StatelessWidget {
               category: "Auditorías",
               child: AuditOptionsCard(),
             ),
+            CustomGroupCategory(
+              category: "Etiquetas",
+              child: TagsOptionsCard(),
+            ),
 
             //!Solo debug, eliminar
             CustomButton(
@@ -88,44 +93,6 @@ class SettingsTemplate extends StatelessWidget {
               },
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    CustomSnackbar.show(
-                      context: context,
-                      message: "Mensaje de información",
-                      type: SnackbarType.info,
-                    );
-                  },
-                  child: Text("Info"),
-                ),
-
-                ElevatedButton(
-                  onPressed: () {
-                    CustomSnackbar.show(
-                      context: context,
-                      message: "Mensaje de error",
-                      type: SnackbarType.error,
-                    );
-                  },
-                  child: Text("Error"),
-                ),
-
-                ElevatedButton(
-                  onPressed: () {
-                    CustomSnackbar.show(
-                      context: context,
-                      message:
-                          "Mensaje de success muy pero q muy largo por una razon",
-                      type: SnackbarType.success,
-                    );
-                  },
-                  child: Text("Success"),
-                ),
-              ],
-            ),
           ],
         ),
       ),

@@ -7,7 +7,7 @@ import 'package:n8n_monitor/widgets/atoms/custom_speed_dial.dart';
 import 'package:n8n_monitor/widgets/molecules/nav_bar.dart';
 import 'package:n8n_monitor/widgets/templates/dashboard_template.dart';
 import 'package:n8n_monitor/widgets/templates/executions_list_template.dart';
-import 'package:n8n_monitor/widgets/templates/settings_template.dart';
+import 'package:n8n_monitor/widgets/templates/tools_template.dart';
 import 'package:n8n_monitor/widgets/templates/workflows_list_template.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
       DashboardTemplate(),
       WorkflowsListTemplate(),
       ExecutionsListTemplate(),
-      SettingsTemplate(),
+      ToolsTemplate(),
     ];
 
     return Scaffold(

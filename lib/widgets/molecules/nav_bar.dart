@@ -29,7 +29,7 @@ class NavBar extends StatelessWidget {
             GButton(icon: Icons.monitor_heart_outlined, text: 'Monitor'),
             GButton(icon: Icons.account_tree_rounded, text: 'Workflows'),
             GButton(icon: Icons.history_rounded, text: 'Ejecuciones'),
-            GButton(icon: Icons.settings_rounded, text: 'Opciones'),
+            GButton(icon: Icons.build_rounded, text: 'Herramientas'),
           ],
           selectedIndex: indexProvider.selectedIndex,
           onTabChange: (index) {
