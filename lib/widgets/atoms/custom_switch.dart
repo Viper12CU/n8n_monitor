@@ -20,7 +20,7 @@ class CustomSwitch extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     const switchWidth = 48.0;
     const switchHeight = 28.0;
-    final activeColor = colorScheme.primary.withOpacity(0.32);
+    final activeColor = colorScheme.primary.withAlpha((0.32 * 255).toInt());
     final inactiveColor = colorScheme.secondary;
     final thumbOnColor = colorScheme.primary;
     final thumbOffColor = Theme.of(context).iconTheme.color ?? Colors.white70;
@@ -44,7 +44,7 @@ class CustomSwitch extends StatelessWidget {
               color: value ? thumbOnColor : thumbOffColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.22),
+                  color: Colors.black.withAlpha((0.22 * 255).toInt()),
                   blurRadius: 5,
                   offset: const Offset(0, 2),
                 ),
@@ -55,7 +55,7 @@ class CustomSwitch extends StatelessWidget {
               size: switchHeight * 0.48,
               color: value
                   ? Theme.of(context).scaffoldBackgroundColor
-                  : Theme.of(context).scaffoldBackgroundColor.withOpacity(0.92),
+                  : Theme.of(context).scaffoldBackgroundColor.withAlpha((0.92 * 255).toInt()),
             ),
           );
         },

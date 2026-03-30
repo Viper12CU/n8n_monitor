@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
+import 'package:n8n_monitor/widgets/atoms/error_message.dart';
 import 'package:n8n_monitor/widgets/molecules/workflow_data_card.dart';
 import 'package:n8n_monitor/widgets/molecules/workflow_info_grid.dart';
 import 'package:n8n_monitor/widgets/molecules/workflow_execution_group.dart';
@@ -140,23 +141,13 @@ class _WorkflowDetailsTemplateState extends State<WorkflowDetailsTemplate> {
 
     if (_errorMessage != null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadWorkflowData,
-              child: const Text('Reintentar'),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ErrorMessage(
+            errorLabel: 'Error al cargar workflow',
+            description: _errorMessage!,
+            onRetry: _loadWorkflowData,
+          ),
         ),
       );
     }

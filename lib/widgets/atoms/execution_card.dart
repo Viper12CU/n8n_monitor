@@ -78,7 +78,7 @@ class ExecutionCard extends StatelessWidget {
                       Text(
                         'ID: $id',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withAlpha((0.7 * 255).toInt()),
                           fontSize: 13,
                         ),
                       ),
@@ -86,7 +86,7 @@ class ExecutionCard extends StatelessWidget {
                       Text(
                         '•',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withAlpha((0.5 * 255).toInt()),
                           fontSize: 13,
                         ),
                       ),
@@ -108,7 +108,7 @@ class ExecutionCard extends StatelessWidget {
             Text(
               date,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withAlpha((0.6 * 255).toInt()),
                 fontSize: 13,
               ),
             ),

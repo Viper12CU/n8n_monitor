@@ -16,11 +16,7 @@ class CustomSnackbar {
         content: _buildContent(message, type),
         backgroundColor: _getBackgroundColor(type),
         duration: duration,
-        behavior: SnackBarBehavior.floating,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
+        behavior: SnackBarBehavior.fixed,
         showCloseIcon: showCloseIcon,
       ),
     );

@@ -108,7 +108,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
                   style: TextStyle(
                     fontSize: 13,
                     height: 1.5,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withAlpha((0.9 * 255).toInt()),
                   ),
                 ),
               ],
@@ -122,7 +122,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
             decoration: BoxDecoration(
               color: Color(0xFF1c2b22),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFF38e07b).withOpacity(0.3)),
+              border: Border.all(color: Color(0xFF38e07b).withAlpha((0.3 * 255).toInt())),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +152,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
                   style: TextStyle(
                     fontSize: 13,
                     height: 1.5,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withAlpha((0.9 * 255).toInt()),
                   ),
                 ),
               ],
@@ -208,7 +208,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
 
     return Text(
       value.toString(),
-      style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.9)),
+      style: TextStyle(fontSize: 13, color: Colors.white.withAlpha((0.9 * 255).toInt())),
     );
   }
 
@@ -224,7 +224,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
       decoration: BoxDecoration(
         color: Color(0xFF122017),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Color(0xFF27352d).withOpacity(0.5)),
+        border: Border.all(color: Color(0xFF27352d).withAlpha((0.5 * 255).toInt())),
       ),
       child: _buildLocationContent(kind, locationData),
     );
@@ -356,7 +356,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon, size: 14, color: Color(0xFF9eb7a8).withOpacity(0.7)),
+            Icon(icon, size: 14, color: Color(0xFF9eb7a8).withAlpha((0.7 * 255).toInt())),
             SizedBox(width: 8),
             Text(
               '$label: ',
@@ -374,7 +374,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
             style: TextStyle(
               fontSize: 12,
               height: 1.4,
-              color: Colors.white.withOpacity(0.85),
+              color: Colors.white.withAlpha((0.85 * 255).toInt()),
               fontFamily: isMonospace ? 'monospace' : null,
             ),
           ),

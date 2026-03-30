@@ -20,7 +20,7 @@ class ErrorMessage extends StatelessWidget {
         color: const Color(0xFF1c2b22),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.red.withOpacity(0.3),
+          color: Colors.red.withAlpha((0.3 * 255).toInt()),
           width: 1,
         ),
       ),
@@ -31,7 +31,7 @@ class ErrorMessage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.red.withAlpha((0.1 * 255).toInt()),
               shape: BoxShape.circle,
             ),
             child: Icon(

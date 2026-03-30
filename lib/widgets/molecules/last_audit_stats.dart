@@ -155,7 +155,7 @@ class _LastAuditStatsState extends State<LastAuditStats> {
                             child: Text(
                               'Resumen de seguridad',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.88),
+                                color: Colors.white.withAlpha((0.88 * 255).toInt()),
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -174,7 +174,7 @@ class _LastAuditStatsState extends State<LastAuditStats> {
                             ? 'Última auditoría: $auditDateText'
                             : 'No hay datos de auditoría guardados',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.55),
+                          color: Colors.white.withAlpha((0.55 * 255).toInt()),
                           fontSize: 12,
                         ),
                       ),
@@ -242,7 +242,7 @@ class _StatTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color borderColor = highlighted
-        ? Theme.of(context).colorScheme.primary.withOpacity(0.45)
+        ? Theme.of(context).colorScheme.primary.withAlpha((0.45 * 255).toInt())
         : const Color(0xFF27352d);
 
     final Color iconColor = highlighted
@@ -267,7 +267,7 @@ class _StatTag extends StatelessWidget {
               fontSize: 12,
               color: highlighted
                   ? Theme.of(context).colorScheme.primary
-                  : Colors.white.withOpacity(0.82),
+                  : Colors.white.withAlpha((0.82 * 255).toInt()),
               fontWeight: FontWeight.w600,
             ),
           ),

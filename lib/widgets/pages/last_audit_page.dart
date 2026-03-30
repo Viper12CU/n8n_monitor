@@ -156,7 +156,7 @@ class _LastAuditPageState extends State<LastAuditPage>
                     child: Text(
                       'Fecha de auditoría: $auditDateText',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.78),
+                        color: Colors.white.withAlpha((0.78 * 255).toInt()),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),

@@ -48,6 +48,7 @@ dependencies:
   flutter_tabbar_lite: ^0.0.6
   accordion: ^2.6.0
   http: ^1.6.0
+  iconoir_flutter: ^7.11.0
 
 dev_dependencies:
   flutter_test:

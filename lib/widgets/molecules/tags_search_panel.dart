@@ -56,7 +56,7 @@ class TagsSearchPanel extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: 'Buscar por nombre o ID',
                     hintStyle: TextStyle(
-                      color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withAlpha((0.5 * 255).toInt()),
                     ),
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: controller.text.isEmpty

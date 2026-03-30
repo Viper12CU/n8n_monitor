@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:n8n_monitor/provider/server_status_animation_provider.dart';
 import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/server_status.dart';
+import 'package:n8n_monitor/widgets/molecules/audit_tags_stats.dart';
 import 'package:n8n_monitor/widgets/molecules/dashboard_info_grid.dart';
 import 'package:n8n_monitor/widgets/molecules/execution_line_chart.dart';
 import 'package:n8n_monitor/widgets/molecules/last_audit_stats.dart';
@@ -33,6 +34,12 @@ class _DashboardTemplateState extends State<DashboardTemplate> {
           const DashboardInfoGrid(),
           const ExecutionLineChart(),
           const LastAuditStats(),
+          Row(
+            children: [
+              Expanded(child: const AuditTagsStats()),
+              Expanded(child: Container()),
+            ],
+          ),
         ],
       ),
     );

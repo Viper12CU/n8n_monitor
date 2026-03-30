@@ -291,7 +291,7 @@ class _TagsTemplateState extends State<TagsTemplate> {
                     child: Center(
                       child: Text(
                         'No hay etiquetas registradas.',
-                        style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 15),
+                          style: TextStyle(color: Colors.white.withAlpha((0.7 * 255).toInt()), fontSize: 15),
                       ),
                     ),
                   )
@@ -312,7 +312,7 @@ class _TagsTemplateState extends State<TagsTemplate> {
                           child: Text(
                             'No se encontraron etiquetas para la búsqueda.',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withAlpha((0.7 * 255).toInt()),
                               fontSize: 14,
                             ),
                             textAlign: TextAlign.center,

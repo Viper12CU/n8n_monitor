@@ -22,7 +22,7 @@ class CustomGroupCategory extends StatelessWidget {
           child: Text(
             category.toUpperCase(),
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withAlpha((0.6 * 255).toInt()),
               fontSize: 14,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,

@@ -156,16 +156,19 @@ class _ExecutionsListTemplateState extends State<ExecutionsListTemplate> {
                 
                 // Si no hay ejecuciones después del filtro, mostrar mensaje
                 if (organizedExecutions.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'No hay ejecuciones con el filtro ${filterProvider.currentFilterLabel.toLowerCase()}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
+                  return RefreshIndicator(
+                    onRefresh: _loadExecutions,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'No hay ejecuciones con el filtro ${filterProvider.currentFilterLabel.toLowerCase()}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
                   );

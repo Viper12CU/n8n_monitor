@@ -44,7 +44,7 @@ class _WorfklowDetailsPageState extends State<WorfklowDetailsPage> {
                 Text(
                   'Eliminando workflow...',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withAlpha((0.9 * 255).toInt()),
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -54,7 +54,7 @@ class _WorfklowDetailsPageState extends State<WorfklowDetailsPage> {
                 Text(
                   'Espera un momento mientras se completa la operación.',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withAlpha((0.6 * 255).toInt()),
                     fontSize: 12,
                   ),
                   textAlign: TextAlign.center,

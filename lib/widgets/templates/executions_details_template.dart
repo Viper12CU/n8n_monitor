@@ -5,6 +5,7 @@ import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_group_category.dart';
 import 'package:n8n_monitor/widgets/atoms/workflow_card.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
+import 'package:n8n_monitor/widgets/atoms/error_message.dart';
 import 'package:n8n_monitor/widgets/molecules/execution_info_grid.dart';
 import 'package:n8n_monitor/api/executions.dart';
 import 'package:n8n_monitor/api/workflows.dart';
@@ -81,23 +82,13 @@ class _ExecutionsDetailsTemplateState extends State<ExecutionsDetailsTemplate> {
 
     if (_errorMessage != null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadExecutionData,
-              child: const Text('Reintentar'),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ErrorMessage(
+            errorLabel: 'Error al cargar ejecución',
+            description: _errorMessage!,
+            onRetry: _loadExecutionData,
+          ),
         ),
       );
     }
