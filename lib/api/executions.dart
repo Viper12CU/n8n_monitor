@@ -349,12 +349,12 @@ Map<String, dynamic> filterExecutionsByTimePeriod(
 
     switch (period) {
       case ExecutionTimePeriod.last12Hours:
-        startDate = now.subtract(const Duration(hours: 12));
+        startDate = now.subtract(Duration(hours: 11));
         intervalCount = 12;
         isHourly = true;
         break;
       case ExecutionTimePeriod.last24Hours:
-        startDate = now.subtract(const Duration(hours: 24));
+        startDate = now.subtract(Duration(hours: 23));
         intervalCount = 24;
         isHourly = true;
         break;
@@ -380,8 +380,10 @@ Map<String, dynamic> filterExecutionsByTimePeriod(
       try {
         final dateStr = execution['startedAt'];
         if (dateStr != null && dateStr.toString().isNotEmpty) {
-          final executionDate = DateTime.parse(dateStr.toString());
-          if (executionDate.isAfter(startDate) && executionDate.isBefore(now)) {
+          final executionDate = DateTime.parse(dateStr.toString()).toLocal();
+          
+          // isAfter(startDate) AND !isAfter(now) = incluye desde startDate hasta ahora (inclusive)
+          if (executionDate.isAfter(startDate) && !executionDate.isAfter(now)) {
             filteredExecutions.add(execution);
           }
         }
@@ -390,34 +392,26 @@ Map<String, dynamic> filterExecutionsByTimePeriod(
       }
     }
 
-    // Generar todas las etiquetas de tiempo para el período
-    final allTimeLabels = <String>[];
-
-    if (isHourly) {
-      // Generar todas las horas
-      for (int i = 0; i < intervalCount; i++) {
-        final time = startDate.add(Duration(hours: i));
-        // Usar solo la hora, no el minuto
-        final timeLabel =
-            '${time.hour.toString().padLeft(2, '0')}:00';
-        allTimeLabels.add(timeLabel);
-      }
-    } else {
-      // Generar todos los días
-      for (int i = 0; i < intervalCount; i++) {
-        final date = startDate.add(Duration(days: i));
-        final dateLabel =
-            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-        allTimeLabels.add(dateLabel);
-      }
-    }
-
     // Agrupar ejecuciones según el período
     final groupedData = <String, int>{};
 
-    // Inicializar todos los labels con 0
-    for (final label in allTimeLabels) {
-      groupedData[label] = 0;
+    if (isHourly) {
+      // Para filtros horarios: generar solo las HORAS (12 o 24 elementos)
+      // La ultima etiqueta sera siempre la hora actual
+      for (int i = 0; i < intervalCount; i++) {
+        final time = startDate.add(Duration(hours: i));
+        final timeLabel =
+            '${time.year}-${time.month.toString().padLeft(2, '0')}-${time.day.toString().padLeft(2, '0')} ${time.hour.toString().padLeft(2, '0')}:00';
+        groupedData[timeLabel] = 0;
+      }
+    } else {
+      // Para filtros de días: generar todos los días INCLUYENDO HOY
+      for (int i = 0; i <= intervalCount; i++) {
+        final date = startDate.add(Duration(days: i));
+        final dateLabel =
+            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+        groupedData[dateLabel] = 0;
+      }
     }
 
     // Contar ejecuciones
@@ -425,18 +419,34 @@ Map<String, dynamic> filterExecutionsByTimePeriod(
       try {
         final dateStr = execution['startedAt'];
         if (dateStr != null && dateStr.toString().isNotEmpty) {
-          final executionDate = DateTime.parse(dateStr.toString()).toLocal();
+          var executionDate = DateTime.parse(dateStr.toString()).toLocal();
           late String timeLabel;
 
           if (isHourly) {
-            // Usar solo la hora, no el minuto
+            // Redondear a la hora más cercana:
+            // Si minutos >= 30, asignar a la siguiente hora
+            // Si minutos < 30, asignar a la hora actual
+            var roundedDate = executionDate;
+            int roundedHour = executionDate.hour;
+            
+            if (executionDate.minute >= 30) {
+              roundedHour = executionDate.hour + 1;
+              // Si la hora se pasa de 23, cambiar de día
+              if (roundedHour > 23) {
+                roundedHour = 0;
+                roundedDate = executionDate.add(Duration(days: 1));
+              }
+            }
+            
             timeLabel =
-                '${executionDate.hour.toString().padLeft(2, '0')}:00';
+                '${roundedDate.year}-${roundedDate.month.toString().padLeft(2, '0')}-${roundedDate.day.toString().padLeft(2, '0')} ${roundedHour.toString().padLeft(2, '0')}:00';
           } else {
+            // Para filtros de días: usar solo la fecha
             timeLabel =
                 '${executionDate.year}-${executionDate.month.toString().padLeft(2, '0')}-${executionDate.day.toString().padLeft(2, '0')}';
           }
 
+          // Incrementar el contador si la etiqueta existe
           if (groupedData.containsKey(timeLabel)) {
             groupedData[timeLabel] = (groupedData[timeLabel] ?? 0) + 1;
           }
@@ -459,7 +469,7 @@ Map<String, dynamic> filterExecutionsByTimePeriod(
 
     return {
       'total': filteredExecutions.length,
-      'data': dataList.map((item) => item.toMap()).toList(),
+      'data': dataList.reversed.map((item) => item.toMap()).toList(),
       'error': null,
     };
   } catch (e) {

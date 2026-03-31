@@ -6,14 +6,20 @@ class LineChartSample extends StatefulWidget {
   final double maxX;
   final double maxY;
   final bool isHourly;
-  const LineChartSample({super.key, required this.dataPoints, required this.maxX, required this.maxY, required this.isHourly});
+  const LineChartSample({
+    super.key,
+    required this.dataPoints,
+    required this.maxX,
+    required this.maxY,
+    required this.isHourly,
+  });
 
   @override
   State<LineChartSample> createState() => _LineChartSampleState();
 }
 
 class _LineChartSampleState extends State<LineChartSample> {
-  List<Color> gradientColors = [ Color(0xFF214d33), Color(0xFF1c2e23)];
+  List<Color> gradientColors = [Color(0xFF214d33), Color(0xFF1c2e23)];
 
   bool showAvg = false;
 
@@ -22,9 +28,6 @@ class _LineChartSampleState extends State<LineChartSample> {
     return LineChart(mainData());
   }
 
- 
-
- 
   LineChartData mainData() {
     return LineChartData(
       gridData: FlGridData(
@@ -39,7 +42,6 @@ class _LineChartSampleState extends State<LineChartSample> {
           );
         },
         getDrawingVerticalLine: (value) {
-
           return FlLine(
             color: Theme.of(context).colorScheme.primary,
             strokeWidth: 3,
@@ -52,11 +54,21 @@ class _LineChartSampleState extends State<LineChartSample> {
           getTooltipItems: (touchedSpots) {
             return touchedSpots.map((touchedSpot) {
               return LineTooltipItem(
-                '${touchedSpot.y.toInt()} executions\n${touchedSpot.x.toInt() + 1} ${ touchedSpot.x.toInt() == 0 ?  widget.isHourly ? "hora" : "día" : widget.isHourly ? "horas" : "días" } atrás',
+                '${touchedSpot.y.toInt()} executions\n${ touchedSpot.x.toInt() == 0 ? "" : widget.isHourly ? touchedSpot.x.toInt() + 1 : touchedSpot.x.toInt()} ${touchedSpot.x.toInt() == 0
+                    ? widget.isHourly
+                          ? "Hace un momento"
+                          : "Hoy"
+                    : touchedSpot.x.toInt() == 1
+                    ? widget.isHourly
+                          ? "hora"
+                          : "día"
+                    : widget.isHourly
+                    ? "horas"
+                    : "días"} ${touchedSpot.x.toInt() == 0 ? "" : "atrás" } ',
                 TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
-                ),
+                ), 
               );
             }).toList();
           },
@@ -98,18 +110,17 @@ class _LineChartSampleState extends State<LineChartSample> {
           color: Theme.of(context).colorScheme.primary,
           barWidth: 5,
           isStrokeCapRound: true,
-          dotData: const FlDotData(show: true),
+          dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: gradientColors
+              colors: gradientColors,
             ),
           ),
         ),
       ],
     );
   }
-
 }
