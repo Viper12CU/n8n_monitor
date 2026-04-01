@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:n8n_monitor/utils/routes.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_button.dart';
 
 class ServerOfflineTemplate extends StatefulWidget {
@@ -12,17 +13,7 @@ class _ServerOfflineTemplateState extends State<ServerOfflineTemplate> {
   bool isLoading = false;
 
   void handleClick() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    debugPrint("Comprobando disponibilidad del servidor...");
-
-    await Future.delayed(Duration(seconds: 3));
-
-    setState(() {
-      isLoading = false;
-    });
+    Navigator.of(context).pushReplacementNamed(AppRoutes.splash);
   }
 
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:n8n_monitor/services/local_storage.dart';
 import 'package:n8n_monitor/api/http_client.dart';
+import 'package:n8n_monitor/services/server_credentials_service.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_snackbar.dart';
 import 'package:n8n_monitor/utils/enums.dart';
 
@@ -25,8 +25,8 @@ class InitialConfFormProvider extends ChangeNotifier {
 
     try {
       if (formKey.currentState!.validate()) {
-        String url = urlController.text;
-        String apiKey = apiKeyController.text;
+        String url = urlController.text.trim();
+        String apiKey = apiKeyController.text.trim();
 
         // Probar la conexión antes de guardar
         final isConnected = await HttpClient.testConnection(
@@ -38,9 +38,13 @@ class InitialConfFormProvider extends ChangeNotifier {
           throw ErrorDescription("Error en al probar conexión");
         }
 
-        // Si la conexión es exitosa, guardar en LocalStorage
-        LocalStorage.setUrl(url);
-        LocalStorage.setApiKey(apiKey);
+        // Si la conexión es exitosa, guardar en SQLite y marcar como activa
+        await ServerCredentialsService.instance.insertCredential(
+          label: url,
+          url: url,
+          apiKey: apiKey,
+          inUse: true,
+        );
 
         if (context.mounted) {
           CustomSnackbar.show(

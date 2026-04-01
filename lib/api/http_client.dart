@@ -1,6 +1,7 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:n8n_monitor/services/local_storage.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:n8n_monitor/services/server_credentials_service.dart';
 
 class HttpClient {
   // Cliente singleton
@@ -9,10 +10,13 @@ class HttpClient {
   HttpClient._internal();
 
   // Obtener headers con API key
-  Map<String, String> _getHeaders({Map<String, String>? additionalHeaders}) {
+  Future<Map<String, String>> _getHeaders({
+    Map<String, String>? additionalHeaders,
+  }) async {
     final headers = {'Accept': 'application/json'};
 
-    final apiKey = LocalStorage.apiKey;
+    final active = await ServerCredentialsService.instance.getInUse();
+    final apiKey = active?.apiKey;
     if (apiKey != null && apiKey.isNotEmpty) {
       headers['x-n8n-api-key'] = apiKey;
     }
@@ -30,8 +34,8 @@ class HttpClient {
     Map<String, String>? headers,
     Map<String, dynamic>? queryParameters,
   }) async {
-    final uri = _buildUri(endpoint, queryParameters);
-    final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    final uri = await _buildUri(endpoint, queryParameters);
+    final mergedHeaders = await _getHeaders(additionalHeaders: headers);
 
     return await http.get(uri, headers: mergedHeaders);
   }
@@ -42,8 +46,8 @@ class HttpClient {
     Map<String, String>? headers,
     Object? body,
   }) async {
-    final uri = _buildUri(endpoint);
-    final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    final uri = await _buildUri(endpoint);
+    final mergedHeaders = await _getHeaders(additionalHeaders: headers);
     if (body != null && !mergedHeaders.containsKey('Content-Type')) {
       mergedHeaders['Content-Type'] = 'application/json';
     }
@@ -61,8 +65,8 @@ class HttpClient {
     Map<String, String>? headers,
     Object? body,
   }) async {
-    final uri = _buildUri(endpoint);
-    final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    final uri = await _buildUri(endpoint);
+    final mergedHeaders = await _getHeaders(additionalHeaders: headers);
     if (body != null && !mergedHeaders.containsKey('Content-Type')) {
       mergedHeaders['Content-Type'] = 'application/json';
     }
@@ -79,8 +83,8 @@ class HttpClient {
     String endpoint, {
     Map<String, String>? headers,
   }) async {
-    final uri = _buildUri(endpoint);
-    final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    final uri = await _buildUri(endpoint);
+    final mergedHeaders = await _getHeaders(additionalHeaders: headers);
 
     return await http.delete(uri, headers: mergedHeaders);
   }
@@ -91,8 +95,8 @@ class HttpClient {
     Map<String, String>? headers,
     Object? body,
   }) async {
-    final uri = _buildUri(endpoint);
-    final mergedHeaders = _getHeaders(additionalHeaders: headers);
+    final uri = await _buildUri(endpoint);
+    final mergedHeaders = await _getHeaders(additionalHeaders: headers);
     if (body != null && !mergedHeaders.containsKey('Content-Type')) {
       mergedHeaders['Content-Type'] = 'application/json';
     }
@@ -105,8 +109,12 @@ class HttpClient {
   }
 
   // Construir URI con base URL y query parameters
-  Uri _buildUri(String endpoint, [Map<String, dynamic>? queryParameters]) {
-    final baseUrl = LocalStorage.url ?? '';
+  Future<Uri> _buildUri(
+    String endpoint, [
+    Map<String, dynamic>? queryParameters,
+  ]) async {
+    final active = await ServerCredentialsService.instance.getInUse();
+    final baseUrl = active?.url ?? '';
     final url = '$baseUrl/api/v1/$endpoint';
     return Uri.parse(url).replace(queryParameters: queryParameters);
   }
@@ -133,5 +141,8 @@ class HttpClient {
   }
 
   // Método para obtener la URL base actual
-  static String? get baseUrl => LocalStorage.url;
+  static Future<String?> get baseUrl async {
+    final active = await ServerCredentialsService.instance.getInUse();
+    return active?.url;
+  }
 }

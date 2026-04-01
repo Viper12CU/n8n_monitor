@@ -37,7 +37,7 @@ class _LastAuditTemplateState extends State<LastAuditTemplate>
 
           sections.add(
             AccordionSection(
-              isOpen: i == 0,
+              isOpen: false,
               header: Text(
                 headerTitle,
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),

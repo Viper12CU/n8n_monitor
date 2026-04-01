@@ -7,6 +7,7 @@ import 'package:n8n_monitor/widgets/atoms/custom_snackbar.dart';
 import 'package:n8n_monitor/widgets/molecules/confirmation_dialog.dart';
 import 'package:n8n_monitor/widgets/molecules/divided_card.dart';
 import 'package:n8n_monitor/widgets/pages/last_audit_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class AuditOptionsCard extends StatefulWidget {
   const AuditOptionsCard({super.key});
@@ -86,7 +87,11 @@ class _AuditOptionsCardState extends State<AuditOptionsCard> {
   void navigateToLastAudit() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => LastAuditPage()),
+      PageTransition(
+        type: PageTransitionType.leftToRight,
+        duration: const Duration(milliseconds: 300),
+        child: const LastAuditPage(),
+      ),
     );
   }
 

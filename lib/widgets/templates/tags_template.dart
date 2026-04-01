@@ -53,8 +53,7 @@ class _TagsTemplateState extends State<TagsTemplate> {
   }
 
   List<Map<String, dynamic>> _extractTags(dynamic data) {
-    final dynamic rawList =
-        data is Map<String, dynamic> && data['data'] is List
+    final dynamic rawList = data is Map<String, dynamic> && data['data'] is List
         ? data['data']
         : data;
 
@@ -272,7 +271,7 @@ class _TagsTemplateState extends State<TagsTemplate> {
     return RefreshIndicator(
       onRefresh: _loadTags,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         children: [
           CustomGroupCategory(
             category: 'Crear etiqueta',
@@ -291,7 +290,10 @@ class _TagsTemplateState extends State<TagsTemplate> {
                     child: Center(
                       child: Text(
                         'No hay etiquetas registradas.',
-                          style: TextStyle(color: Colors.white.withAlpha((0.7 * 255).toInt()), fontSize: 15),
+                        style: TextStyle(
+                          color: Colors.white.withAlpha((0.7 * 255).toInt()),
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   )
@@ -312,7 +314,9 @@ class _TagsTemplateState extends State<TagsTemplate> {
                           child: Text(
                             'No se encontraron etiquetas para la búsqueda.',
                             style: TextStyle(
-                              color: Colors.white.withAlpha((0.7 * 255).toInt()),
+                              color: Colors.white.withAlpha(
+                                (0.7 * 255).toInt(),
+                              ),
                               fontSize: 14,
                             ),
                             textAlign: TextAlign.center,

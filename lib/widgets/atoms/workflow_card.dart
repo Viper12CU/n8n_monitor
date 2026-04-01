@@ -7,6 +7,7 @@ import 'package:n8n_monitor/widgets/atoms/custom_snackbar.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_switch.dart';
 import 'package:n8n_monitor/widgets/molecules/confirmation_dialog.dart';
 import 'package:n8n_monitor/widgets/pages/worfklow_details_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class WorkflowCard extends StatefulWidget {
   final String id;
@@ -174,10 +175,11 @@ class _WorkflowCardState extends State<WorkflowCard> {
   Widget build(BuildContext context) {
     //Navegar a detalles del workflow
     Future<void> navigateToDetails() async {
-      final wasDeleted = await Navigator.push<bool>(
+      final wasDeleted = await Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => WorfklowDetailsPage(workflowId: widget.id),
+        PageTransition(
+          type: PageTransitionType.leftToRight,
+          childBuilder: (context) => WorfklowDetailsPage(workflowId: widget.id),
         ),
       );
 

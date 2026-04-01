@@ -6,6 +6,19 @@ class ServersManagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ServersManageTemplate();
+    return Scaffold(
+      appBar: AppBar(
+        scrolledUnderElevation: 0,
+        title: Text(
+          'GESTIONAR SERVIDOR',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            letterSpacing: 1.2,
+          ),
+        ),
+      ),
+      body: const ServersManageTemplate(),
+    );
   }
 }

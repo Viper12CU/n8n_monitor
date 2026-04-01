@@ -4,6 +4,7 @@ import 'package:n8n_monitor/services/cache_service.dart';
 import 'package:n8n_monitor/utils/enums.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
 import 'package:n8n_monitor/widgets/pages/last_audit_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class LastAuditStats extends StatefulWidget {
   const LastAuditStats({super.key});
@@ -119,9 +120,7 @@ class _LastAuditStatsState extends State<LastAuditStats> {
               : () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const LastAuditPage(),
-                    ),
+                    PageTransition(type: PageTransitionType.leftToRight, child: const LastAuditPage()),
                   );
                 },
           borderRadius: BorderRadius.circular(22),

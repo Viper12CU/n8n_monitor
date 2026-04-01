@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:n8n_monitor/utils/execution_helpers.dart';
 import 'package:n8n_monitor/widgets/pages/executions_details_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class ExecutionCard extends StatelessWidget {
   final String workflow;
@@ -27,9 +28,8 @@ class ExecutionCard extends StatelessWidget {
     void navigateToDetails() {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ExecutionsDetailsPage(executionId: id),
-        ),
+       PageTransition(type: PageTransitionType.leftToRight, childBuilder: (context) => ExecutionsDetailsPage(executionId: id),),
+       
       );
     }
 

@@ -4,14 +4,16 @@ import 'package:n8n_monitor/widgets/atoms/custom_form_input_field.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_button.dart';
 
 class ConnectionSettingsForm extends StatefulWidget {
+  final String initialLabel;
   final String initialUrl;
   final String initialApiKey;
-  final Future<void> Function(String url, String apiKey)? onSave;
+  final Future<void> Function(String label, String url, String apiKey)? onSave;
 
   const ConnectionSettingsForm({
     super.key,
-    this.initialUrl = 'https://api.n8n.io',
-    this.initialApiKey = 'n8n_api_1234567890abcdef',
+    this.initialLabel = '',
+    this.initialUrl = '',
+    this.initialApiKey = '',
     this.onSave,
   });
 
@@ -22,47 +24,32 @@ class ConnectionSettingsForm extends StatefulWidget {
 class _ConnectionSettingsFormState extends State<ConnectionSettingsForm> {
   late TextEditingController _urlController;
   late TextEditingController _apiKeyController;
-  late String _originalUrl;
-  late String _originalApiKey;
-
-  bool _isModified = false;
+  late TextEditingController _labelController;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _originalUrl = widget.initialUrl;
-    _originalApiKey = widget.initialApiKey;
+    _labelController = TextEditingController(text: widget.initialLabel);
     _urlController = TextEditingController(text: widget.initialUrl);
     _apiKeyController = TextEditingController(text: widget.initialApiKey);
-    _urlController.addListener(_checkIfModified);
-    _apiKeyController.addListener(_checkIfModified);
-  }
-
-  void _checkIfModified() {
-    final hasChanges = _urlController.text != _originalUrl ||
-        _apiKeyController.text != _originalApiKey;
-    if (hasChanges != _isModified) {
-      setState(() {
-        _isModified = hasChanges;
-      });
-    }
   }
 
   void _handleSave() async {
-    if (_isModified && !_isLoading) {
+    if (!_isLoading) {
       setState(() {
         _isLoading = true;
       });
 
       if (widget.onSave != null) {
-        await widget.onSave!(_urlController.text, _apiKeyController.text);
+        await widget.onSave!(
+          _labelController.text,
+          _urlController.text,
+          _apiKeyController.text,
+        );
       }
 
       setState(() {
-        _originalUrl = _urlController.text;
-        _originalApiKey = _apiKeyController.text;
-        _isModified = false;
         _isLoading = false;
       });
     }
@@ -70,6 +57,7 @@ class _ConnectionSettingsFormState extends State<ConnectionSettingsForm> {
 
   @override
   void dispose() {
+    _labelController.dispose();
     _urlController.dispose();
     _apiKeyController.dispose();
     super.dispose();
@@ -83,6 +71,13 @@ class _ConnectionSettingsFormState extends State<ConnectionSettingsForm> {
       children: [
         DividedCard(
           children: [
+            CustomFormInputField(
+              label: 'Label',
+              icon: Icons.label_outline,
+              controller: _labelController,
+              hintText: 'Servidor principal',
+              submitedForm: () {},
+            ),
             CustomFormInputField(
               label: 'URL del servidor',
               icon: Icons.link,
@@ -102,9 +97,9 @@ class _ConnectionSettingsFormState extends State<ConnectionSettingsForm> {
           ],
         ),
         IgnorePointer(
-          ignoring: !_isModified || _isLoading,
+          ignoring: _isLoading,
           child: Opacity(
-            opacity: _isModified && !_isLoading ? 1.0 : 0.5,
+            opacity: _isLoading ? 0.5 : 1.0,
             child: CustomButton(
               label: 'Comprobar Conexión',
               icon: Icons.electric_bolt_rounded,

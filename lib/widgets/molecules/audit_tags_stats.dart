@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:n8n_monitor/api/tags.dart';
 import 'package:n8n_monitor/utils/enums.dart';
-import 'package:n8n_monitor/utils/routes.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
+import 'package:n8n_monitor/widgets/pages/tags_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class AuditTagsStats extends StatefulWidget {
   const AuditTagsStats({super.key});
@@ -89,7 +90,14 @@ class _AuditTagsStatsState extends State<AuditTagsStats>
             onTap: _isLoading || !hasData
                 ? null
                 : () {
-                    Navigator.of(context).pushNamed(AppRoutes.tags);
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.leftToRight,
+                        duration: const Duration(milliseconds: 300),
+                        child: TagsPage(),
+                      ),
+                    );
                   },
             borderRadius: BorderRadius.circular(22),
             child: Container(
@@ -121,7 +129,9 @@ class _AuditTagsStatsState extends State<AuditTagsStats>
                               child: Text(
                                 'Tags disponibles',
                                 style: TextStyle(
-                                  color: Colors.white.withAlpha((0.88 * 255).toInt()),
+                                  color: Colors.white.withAlpha(
+                                    (0.88 * 255).toInt(),
+                                  ),
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -165,10 +175,12 @@ class _AuditTagsStatsState extends State<AuditTagsStats>
           ),
           color: Colors.transparent,
         ),
-        child: Center(child: Text(totalTag.toString(), style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold
-        ),)),
+        child: Center(
+          child: Text(
+            totalTag.toString(),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }

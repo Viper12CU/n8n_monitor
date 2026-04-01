@@ -34,7 +34,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => WorkflowFilterProvider()),
         ChangeNotifierProvider(create: (_) => ExecutionFilterProvider()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -44,13 +44,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool urlExist = LocalStorage.url != null;
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'n8n Monitor',
       theme: AppTheme.darkTheme,
-      initialRoute: urlExist ? AppRoutes.homePage : AppRoutes.apiConfiguration,
+      initialRoute: AppRoutes.splash,
       routes: AppRoutes.routes,
     );
   }

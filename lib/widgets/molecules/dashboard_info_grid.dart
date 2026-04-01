@@ -13,6 +13,7 @@ class DashboardInfoGrid extends StatefulWidget {
 class _DashboardInfoGridState extends State<DashboardInfoGrid> {
   int totalWorkflows = 0;
   int activeWorkflows = 0;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -21,14 +22,28 @@ class _DashboardInfoGridState extends State<DashboardInfoGrid> {
   }
 
   Future<void> _loadData() async {
-    // Aquí deberías cargar los datos reales, por ahora usaremos valores de ejemplo
-    final total = await getTotalWorkflow();
-    final active = await getTotalActiveWorkflow();
-
     setState(() {
-      totalWorkflows = total;
-      activeWorkflows = active;
+      _isLoading = true;
     });
+
+    try {
+      final total = await getTotalWorkflow();
+      final active = await getTotalActiveWorkflow();
+
+      if (mounted) {
+        setState(() {
+          totalWorkflows = total;
+          activeWorkflows = active;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -45,11 +60,13 @@ class _DashboardInfoGridState extends State<DashboardInfoGrid> {
       physics: NeverScrollableScrollPhysics(),
       children: [
         InfoContainerSm(
+          isLoading: _isLoading,
           icon: Icons.now_widgets_rounded,
           title: "Total workflows",
           value: totalWorkflows.toString(),
         ),
         InfoContainerSm(
+          isLoading: _isLoading,
           variant: InfoContainerSmVariant.secondary,
           icon: Icons.slow_motion_video_rounded,
           title: "Workflows activos",

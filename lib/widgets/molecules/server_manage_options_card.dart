@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:n8n_monitor/widgets/molecules/divided_card.dart';
-import 'package:n8n_monitor/widgets/pages/tags_page.dart';
+import 'package:n8n_monitor/widgets/pages/servers_manage_page.dart';
 import 'package:page_transition/page_transition.dart';
 
-class TagsOptionsCard extends StatelessWidget {
-  const TagsOptionsCard({super.key});
+class ServerManageOptionsCard extends StatelessWidget {
+  const ServerManageOptionsCard({super.key});
 
-  void _navigateToTags(BuildContext context) {
+  void _navigateToServerManage(BuildContext context) {
     Navigator.push(
       context,
       PageTransition(
         duration: const Duration(milliseconds: 300),
         type: PageTransitionType.leftToRight,
-        child: const TagsPage(),
+        child: const ServersManagePage(),
       ),
     );
   }
@@ -27,7 +27,7 @@ class TagsOptionsCard extends StatelessWidget {
         Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => _navigateToTags(context),
+            onTap: () => _navigateToServerManage(context),
             borderRadius: BorderRadius.circular(14.0),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
@@ -36,7 +36,7 @@ class TagsOptionsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.sell_outlined,
+                    Icons.dns_rounded,
                     size: 22,
                     color: colorScheme.onSecondary,
                   ),
@@ -45,7 +45,7 @@ class TagsOptionsCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Gestionar etiquetas',
+                          'Gestionar servidor',
                           style: textTheme.bodyMedium?.copyWith(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -53,7 +53,7 @@ class TagsOptionsCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Crear, ver, actualizar y eliminar tags',
+                          'Configurar conexión y parámetros del servidor',
                           style: textTheme.bodySmall?.copyWith(
                             color: Colors.white54,
                             fontSize: 12,
