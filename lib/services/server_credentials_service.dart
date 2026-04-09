@@ -11,6 +11,8 @@ class ServerCredential {
   final String apiKey;
   final bool inUse;
   final DateTime createdAt;
+  final bool hasExpirationDate;
+  final DateTime? apiKeyExpirationDate;
 
   const ServerCredential({
     required this.id,
@@ -19,6 +21,8 @@ class ServerCredential {
     required this.apiKey,
     required this.inUse,
     required this.createdAt,
+    this.hasExpirationDate = false,
+    this.apiKeyExpirationDate,
   });
 
   static ServerCredential fromRow(Row row) {
@@ -29,6 +33,10 @@ class ServerCredential {
       apiKey: row['api_key'] as String,
       inUse: (row['in_use'] as int) == 1,
       createdAt: DateTime.parse(row['created_at'] as String),
+      hasExpirationDate: (row['has_expiration_date'] as int?) == 1,
+      apiKeyExpirationDate: row['api_key_expiration_date'] != null 
+        ? DateTime.parse(row['api_key_expiration_date'] as String)
+        : null,
     );
   }
 }
@@ -67,9 +75,24 @@ class ServerCredentialsService {
         url TEXT NOT NULL,
         api_key TEXT NOT NULL,
         in_use INTEGER NOT NULL DEFAULT 0,
-        created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        has_expiration_date INTEGER NOT NULL DEFAULT 0,
+        api_key_expiration_date TEXT
       )
     ''');
+
+    // Migración: Agregar columnas si no existen (para bases de datos existentes)
+    try {
+      db.execute('ALTER TABLE server_credentials ADD COLUMN has_expiration_date INTEGER NOT NULL DEFAULT 0');
+    } catch (e) {
+      // La columna ya existe, no hacer nada
+    }
+
+    try {
+      db.execute('ALTER TABLE server_credentials ADD COLUMN api_key_expiration_date TEXT');
+    } catch (e) {
+      // La columna ya existe, no hacer nada
+    }
 
     _db = db;
     return db;
@@ -85,6 +108,8 @@ class ServerCredentialsService {
     required String url,
     required String apiKey,
     bool inUse = false,
+    bool hasExpirationDate = false,
+    DateTime? apiKeyExpirationDate,
   }) async {
     final db = await _openDb();
 
@@ -118,9 +143,16 @@ class ServerCredentialsService {
       }
 
       final stmt = db.prepare(
-        'INSERT INTO server_credentials (label, url, api_key, in_use) VALUES (?, ?, ?, ?)',
+        'INSERT INTO server_credentials (label, url, api_key, in_use, has_expiration_date, api_key_expiration_date) VALUES (?, ?, ?, ?, ?, ?)',
       );
-      stmt.execute([label, url, apiKey, inUse ? 1 : 0]);
+      stmt.execute([
+        label,
+        url,
+        apiKey,
+        inUse ? 1 : 0,
+        hasExpirationDate ? 1 : 0,
+        apiKeyExpirationDate?.toIso8601String(),
+      ]);
       stmt.dispose();
 
       final id = db.lastInsertRowId;
@@ -135,7 +167,7 @@ class ServerCredentialsService {
   Future<List<ServerCredential>> getAll() async {
     final db = await _openDb();
     final result = db.select(
-      'SELECT id, label, url, api_key, in_use, created_at FROM server_credentials ORDER BY created_at DESC',
+      'SELECT id, label, url, api_key, in_use, created_at, has_expiration_date, api_key_expiration_date FROM server_credentials ORDER BY created_at DESC',
     );
 
     return result.map(ServerCredential.fromRow).toList();
@@ -144,7 +176,7 @@ class ServerCredentialsService {
   Future<ServerCredential?> getById(int id) async {
     final db = await _openDb();
     final result = db.select(
-      'SELECT id, label, url, api_key, in_use, created_at FROM server_credentials WHERE id = ? LIMIT 1',
+      'SELECT id, label, url, api_key, in_use, created_at, has_expiration_date, api_key_expiration_date FROM server_credentials WHERE id = ? LIMIT 1',
       [id],
     );
 
@@ -155,7 +187,7 @@ class ServerCredentialsService {
   Future<ServerCredential?> getInUse() async {
     final db = await _openDb();
     final result = db.select(
-      'SELECT id, label, url, api_key, in_use, created_at FROM server_credentials WHERE in_use = 1 LIMIT 1',
+      'SELECT id, label, url, api_key, in_use, created_at, has_expiration_date, api_key_expiration_date FROM server_credentials WHERE in_use = 1 LIMIT 1',
     );
 
     if (result.isEmpty) return null;
@@ -168,6 +200,8 @@ class ServerCredentialsService {
     required String url,
     required String apiKey,
     bool? inUse,
+    bool? hasExpirationDate,
+    DateTime? apiKeyExpirationDate,
   }) async {
     final db = await _openDb();
 
@@ -178,9 +212,17 @@ class ServerCredentialsService {
       }
 
       final stmt = db.prepare(
-        'UPDATE server_credentials SET label = ?, url = ?, api_key = ?, in_use = COALESCE(?, in_use) WHERE id = ?',
+        'UPDATE server_credentials SET label = ?, url = ?, api_key = ?, in_use = COALESCE(?, in_use), has_expiration_date = COALESCE(?, has_expiration_date), api_key_expiration_date = COALESCE(?, api_key_expiration_date) WHERE id = ?',
       );
-      stmt.execute([label, url, apiKey, inUse == null ? null : (inUse ? 1 : 0), id]);
+      stmt.execute([
+        label,
+        url,
+        apiKey,
+        inUse == null ? null : (inUse ? 1 : 0),
+        hasExpirationDate == null ? null : (hasExpirationDate ? 1 : 0),
+        apiKeyExpirationDate?.toIso8601String(),
+        id,
+      ]);
       stmt.dispose();
 
       db.execute('COMMIT');

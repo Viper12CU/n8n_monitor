@@ -41,6 +41,8 @@ class _ServersManageTemplateState extends State<ServersManageTemplate> {
     String label,
     String url,
     String apiKey,
+    bool hasExpirationDate,
+    DateTime? apiKeyExpirationDate,
   ) async {
     try {
       final isConnected = await HttpClient.testConnection(
@@ -65,6 +67,8 @@ class _ServersManageTemplateState extends State<ServersManageTemplate> {
         url: url,
         apiKey: apiKey,
         inUse: true,
+        hasExpirationDate: hasExpirationDate,
+        apiKeyExpirationDate: apiKeyExpirationDate,
       );
 
       if (mounted) {
@@ -106,8 +110,17 @@ class _ServersManageTemplateState extends State<ServersManageTemplate> {
                 initialLabel: '',
                 initialUrl: '',
                 initialApiKey: '',
-                onSave: (label, url, apiKey) async =>
-                    await _handleTestApi(context, label, url, apiKey),
+                initialHasExpirationDate: false,
+                initialExpirationDate: null,
+                onSave: (label, url, apiKey, hasExpirationDate, expirationDate) async =>
+                    await _handleTestApi(
+                      context,
+                      label,
+                      url,
+                      apiKey,
+                      hasExpirationDate,
+                      expirationDate,
+                    ),
               ),
             ),
             CustomGroupCategory(

@@ -52,6 +52,7 @@ dependencies:
   http: ^1.6.0
   iconoir_flutter: ^7.11.0
   page_transition: ^2.2.1
+  flutter_local_notifications: ^20.1.0
 
 dev_dependencies:
   flutter_test:

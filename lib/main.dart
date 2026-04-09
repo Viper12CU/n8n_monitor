@@ -7,13 +7,14 @@ import 'package:n8n_monitor/provider/server_status_animation_provider.dart';
 import 'package:n8n_monitor/provider/workflow_filter_provider.dart';
 import 'package:n8n_monitor/provider/execution_filter_provider.dart';
 import 'package:n8n_monitor/services/local_storage.dart';
+import 'package:n8n_monitor/services/notification_services.dart';
 import 'package:n8n_monitor/utils/routes.dart';
 import 'package:n8n_monitor/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+  await NotificationServices().init();
   await LocalStorage.init();
 
   SystemChrome.setSystemUIOverlayStyle(

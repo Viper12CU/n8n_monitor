@@ -22,6 +22,25 @@ class ServerCredentialsList extends StatelessWidget {
     return '$y-$m-$d $h:$min';
   }
 
+  String _formatDateOnly(DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
+
+  bool _isExpiredOrSoon(DateTime expirationDate) {
+    final now = DateTime.now();
+    final difference = expirationDate.difference(now).inDays;
+    return difference <= 0; // Expirada o hoy
+  }
+
+  bool _isExpirationSoon(DateTime expirationDate) {
+    final now = DateTime.now();
+    final difference = expirationDate.difference(now).inDays;
+    return difference > 0 && difference <= 30; // Entre hoy y 30 días
+  }
+
   @override
   Widget build(BuildContext context) {
     if (credentials.isEmpty) {
@@ -106,11 +125,62 @@ class ServerCredentialsList extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Creada: ${_formatDate(credential.createdAt)}',
-                    style: const TextStyle(
-                      color: Color(0x99FFFFFF),
-                      fontSize: 12,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 8,
+                      children: [
+                        Text(
+                          'Creada: ${_formatDate(credential.createdAt)}',
+                          style: const TextStyle(
+                            color: Color(0x99FFFFFF),
+                            fontSize: 12,
+                          ),
+                        ),
+                        if (credential.hasExpirationDate) ...[
+                          Row(
+                            spacing: 8,
+                            children: [
+                              if (_isExpiredOrSoon(credential.apiKeyExpirationDate!))
+                                Icon(
+                                  Icons.warning_rounded,
+                                  size: 16,
+                                  color: Colors.redAccent,
+                                )
+                              else if (_isExpirationSoon(credential.apiKeyExpirationDate!))
+                                Icon(
+                                  Icons.info_rounded,
+                                  size: 16,
+                                  color: Colors.orangeAccent,
+                                ),
+                              Expanded(
+                                child: Text(
+                                  'Expira: ${_formatDateOnly(credential.apiKeyExpirationDate!)}',
+                                  style: TextStyle(
+                                    color: _isExpiredOrSoon(credential.apiKeyExpirationDate!)
+                                        ? Colors.redAccent
+                                        : _isExpirationSoon(credential.apiKeyExpirationDate!)
+                                            ? Colors.orangeAccent
+                                            : const Color(0x99FFFFFF),
+                                    fontSize: 12,
+                                    fontWeight: _isExpiredOrSoon(credential.apiKeyExpirationDate!) || _isExpirationSoon(credential.apiKeyExpirationDate!)
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ] else
+                          Text(
+                            'Sin fecha de expiración',
+                            style: const TextStyle(
+                              color: Color(0x99FFFFFF),
+                              fontSize: 12,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   Row(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:n8n_monitor/services/notification_services.dart';
+import 'package:n8n_monitor/widgets/atoms/custom_button.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_group_category.dart';
 import 'package:n8n_monitor/widgets/molecules/audit_options_card.dart';
 import 'package:n8n_monitor/widgets/molecules/server_manage_options_card.dart';
@@ -27,6 +29,12 @@ class ToolsTemplate extends StatelessWidget {
               category: "Etiquetas",
               child: TagsOptionsCard(),
             ),
+            CustomButton(label: "Mostrar notificaciones", icon: Icons.notifications_active_outlined, onTap: () {
+              NotificationServices().showNotification(
+                title: "Notificación de prueba",
+                body: "Esta es una notificación de prueba desde n8n Monitor.",
+              );
+            })
           ],
         ),
       ),

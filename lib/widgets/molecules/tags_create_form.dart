@@ -35,7 +35,7 @@ class TagsCreateForm extends StatelessWidget {
             submitedForm: onCreate,
           ),
           CustomButton(
-            label: 'Crear nueva tag',
+            label: 'Crear nueva etiqueta',
             icon: Icons.add,
             onTap: onCreate,
             isLoading: isCreating,
