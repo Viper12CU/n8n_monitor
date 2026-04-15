@@ -8,6 +8,7 @@ class ExecutionCard extends StatelessWidget {
   final String status;
   final String id;
   final String date;
+  final VoidCallback? onExecutionChanged;
 
   const ExecutionCard({
     super.key,
@@ -15,6 +16,7 @@ class ExecutionCard extends StatelessWidget {
     required this.status,
     required this.id,
     required this.date,
+    this.onExecutionChanged,
   });
 
   
@@ -25,12 +27,18 @@ class ExecutionCard extends StatelessWidget {
 
     // Navegar a la página de detalles del ejecucion 
 
-    void navigateToDetails() {
-      Navigator.push(
+    void navigateToDetails() async {
+      final result = await Navigator.push(
         context,
        PageTransition(type: PageTransitionType.leftToRight, childBuilder: (context) => ExecutionsDetailsPage(executionId: id),),
        
       );
+      
+      // Si el resultado es true, significa que hubo cambios (retry o delete)
+      if (result == true && context.mounted) {
+        // Notificar al widget padre para que refresque
+        onExecutionChanged?.call();
+      }
     }
 
 

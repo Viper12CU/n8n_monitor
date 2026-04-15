@@ -160,11 +160,6 @@ class _LastAuditStatsState extends State<LastAuditStats> {
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 18,
-                            color: hasData ? Colors.white70 : Colors.white30,
-                          ),
                         ],
                       ),
                       const SizedBox(height: 4),

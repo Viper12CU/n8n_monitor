@@ -45,7 +45,7 @@ class _ExecutionsDetailsPageState extends State<ExecutionsDetailsPage> {
       if (response['error'] == null) {
         _showSnackBar('Ejecución eliminada correctamente');
         if (mounted) {
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         }
       } else {
         _showSnackBar(response['error'], isError: true);
@@ -62,6 +62,9 @@ class _ExecutionsDetailsPageState extends State<ExecutionsDetailsPage> {
 
     if (response['error'] == null) {
       _showSnackBar('Ejecución reiniciada correctamente');
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
     } else {
       _showSnackBar(response['error'], isError: true);
     }
@@ -122,6 +125,7 @@ class _ExecutionsDetailsPageState extends State<ExecutionsDetailsPage> {
           _isLoading ? () {} : _handleRetry,
           _isLoading ? () {} : _handleDelete,
           _isLoading ? () {} : _handleStop,
+
         ],
         secondaryBackgroundColor: Theme.of(context).colorScheme.primary,
         secondaryForegroundColor: Theme.of(context).scaffoldBackgroundColor,

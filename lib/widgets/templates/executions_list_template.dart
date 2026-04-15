@@ -193,6 +193,7 @@ class _ExecutionsListTemplateState extends State<ExecutionsListTemplate> {
                               status: execution['status'] ?? 'unknown',
                               id: execution['id'] ?? '',
                               date: execution['formattedTime'] ?? '',
+                              onExecutionChanged: _loadExecutions,
                             );
                           }).toList(),
                         ),

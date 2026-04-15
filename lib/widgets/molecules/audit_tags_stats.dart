@@ -80,83 +80,78 @@ class _AuditTagsStatsState extends State<AuditTagsStats>
   Widget build(BuildContext context) {
     final bool hasData = _totalTags > 0;
 
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.5,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: _isLoading || !hasData
-                ? null
-                : () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.leftToRight,
-                        duration: const Duration(milliseconds: 300),
-                        child: TagsPage(),
-                      ),
-                    );
-                  },
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: _isLoading || !hasData
+            ? null
+            : () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.leftToRight,
+                    duration: const Duration(milliseconds: 300),
+                    child: TagsPage(),
+                  ),
+                );
+              },
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 200),
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFF27352d)),
+            color: Theme.of(context).cardTheme.color,
             borderRadius: BorderRadius.circular(22),
-            child: Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF27352d)),
-                color: Theme.of(context).cardTheme.color,
-                borderRadius: BorderRadius.circular(22),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 92,
-                      child: Center(
-                        child: CustomLoader(variant: LoaderVariant.light),
-                      ),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          child: _isLoading
+              ? const SizedBox(
+                  height: 92,
+                  child: Center(
+                    child: CustomLoader(variant: LoaderVariant.light),
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.local_offer_rounded,
-                              size: 18,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Tags disponibles',
-                                style: TextStyle(
-                                  color: Colors.white.withAlpha(
-                                    (0.88 * 255).toInt(),
-                                  ),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
+                        Icon(
+                          Icons.local_offer_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        const SizedBox(height: 14),
-                        dataContainer(context, _totalTags),
-
-                        if (hasData) ...[
-                          const SizedBox(height: 14),
-                          Text(
-                            'Toca para gestionar',
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Tags disponibles',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 12,
+                              color: Colors.white.withAlpha(
+                                (0.88 * 255).toInt(),
+                              ),
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ],
+                        ),
                       ],
                     ),
-            ),
-          ),
+                    const SizedBox(height: 14),
+                    dataContainer(context, _totalTags),
+
+                    if (hasData) ...[
+                      const SizedBox(height: 14),
+                      Text(
+                        'Toca para gestionar',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
         ),
       ),
     );
