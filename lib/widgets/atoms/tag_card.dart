@@ -12,6 +12,40 @@ class TagCard extends StatelessWidget {
     required this.onDelete,
   });
 
+  Widget _buildActionButton({
+    required IconData icon,
+    required String tooltip,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: color.withAlpha((0.1 * 255).toInt()),
+              border: Border.all(
+                color: color.withAlpha((0.3 * 255).toInt()),
+                width: 1,
+              ),
+            ),
+            child: Icon(
+              icon,
+              size: 18,
+              color: color,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final id = (tag['id'] ?? '-').toString();
@@ -36,30 +70,22 @@ class TagCard extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          Text(
-            'ID: $id',
-            style: const TextStyle(
-              color: Color(0xFF9eb7a8),
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 8,
               children: [
-                IconButton(
+                _buildActionButton(
+                  icon: Icons.edit_outlined,
                   tooltip: 'Actualizar',
+                  color: const Color(0xFF4DB6AC),
                   onPressed: () => onUpdate(tag),
-                  icon: const Icon(Icons.edit_outlined),
                 ),
-                IconButton(
+                _buildActionButton(
+                  icon: Icons.delete_outline_rounded,
                   tooltip: 'Eliminar',
+                  color: const Color(0xFFE57373),
                   onPressed: () => onDelete(tag),
-                  icon: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: Colors.redAccent,
-                  ),
                 ),
               ],
             ),

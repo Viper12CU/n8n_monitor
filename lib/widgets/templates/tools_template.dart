@@ -3,6 +3,7 @@ import 'package:n8n_monitor/services/notification_services.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_button.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_group_category.dart';
 import 'package:n8n_monitor/widgets/molecules/audit_options_card.dart';
+import 'package:n8n_monitor/widgets/molecules/credencials_options_card.dart';
 import 'package:n8n_monitor/widgets/molecules/server_manage_options_card.dart';
 import 'package:n8n_monitor/widgets/molecules/tags_options_card.dart';
 
@@ -28,6 +29,10 @@ class ToolsTemplate extends StatelessWidget {
             CustomGroupCategory(
               category: "Etiquetas",
               child: TagsOptionsCard(),
+            ),
+            CustomGroupCategory(
+              category: "Credenciales",
+              child: CredencialsOptionsCard(),
             ),
             CustomButton(label: "Mostrar notificaciones", icon: Icons.notifications_active_outlined, onTap: () {
               NotificationServices().showNotification(
