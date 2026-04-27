@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:n8n_monitor/api/audit.dart';
 import 'package:n8n_monitor/services/cache_service.dart';
 import 'package:n8n_monitor/utils/enums.dart';
-import 'package:n8n_monitor/widgets/atoms/custom_loader.dart';
 import 'package:n8n_monitor/widgets/atoms/custom_snackbar.dart';
 import 'package:n8n_monitor/widgets/molecules/confirmation_dialog.dart';
-import 'package:n8n_monitor/widgets/molecules/divided_card.dart';
+import 'package:n8n_monitor/widgets/molecules/tools_card.dart';
 import 'package:n8n_monitor/widgets/pages/last_audit_page.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -18,71 +17,6 @@ class AuditOptionsCard extends StatefulWidget {
 
 class _AuditOptionsCardState extends State<AuditOptionsCard> {
   bool _isLoading = false;
-
-  Widget _buildActionTile({
-    required VoidCallback? onTap,
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    bool isLoading = false,
-  }) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14.0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-          child: Row(
-            spacing: 14.0,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: isLoading ? 32 : 22,
-                height: 22,
-                child: isLoading
-                    ? const CustomLoader(variant: LoaderVariant.light)
-                    : Icon(icon, size: 22, color: colorScheme.onSecondary),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isLoading
-                            ? Colors.white70
-                            : colorScheme.onSecondary,
-                      ),
-                    ),
-                    if (subtitle != null)
-                      Text(
-                        subtitle,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: Colors.white54,
-                          fontSize: 12,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 14,
-                color: Colors.white54,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   void navigateToLastAudit() {
     Navigator.push(
@@ -149,24 +83,20 @@ class _AuditOptionsCardState extends State<AuditOptionsCard> {
 
   @override
   Widget build(BuildContext context) {
-    return DividedCard(
-      children: [
-        _buildActionTile(
-          onTap: _isLoading ? null : startAudit,
-          icon: Icons.play_arrow_rounded,
-          title: _isLoading
-              ? 'Ejecutando auditoría...'
-              : 'Iniciar auditoría de seguridad',
-          subtitle: _isLoading ? 'Esto puede tardar unos segundos' : null,
-          isLoading: _isLoading,
-        ),
-        _buildActionTile(
-          onTap: navigateToLastAudit,
-          icon: Icons.av_timer_rounded,
-          title: 'Ver última auditoría',
-          subtitle: 'Consultar último resultado guardado',
-        ),
-      ],
+    return ToolsCard(
+      height: 200,
+      centerTitle: 'Auditoría',
+      leftIcon: _isLoading ? Icons.hourglass_top_rounded : Icons.play_arrow_rounded,
+      leftTitle:
+          _isLoading ? 'Ejecutando auditoría...' : 'Iniciar auditoría',
+      leftDescription: _isLoading
+          ? 'Esto puede tardar unos segundos'
+          : 'Auditar seguridad y permisos del servidor',
+      rightIcon: Icons.av_timer_rounded,
+      rightTitle: 'Última auditoría',
+      rightDescription: 'Consultar último resultado guardado',
+      onLeftTap: _isLoading ? null : startAudit,
+      onRightTap: navigateToLastAudit,
     );
   }
 }

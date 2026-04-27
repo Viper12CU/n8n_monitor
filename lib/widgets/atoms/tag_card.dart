@@ -48,7 +48,6 @@ class TagCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final id = (tag['id'] ?? '-').toString();
     final name = (tag['name'] ?? 'Sin nombre').toString();
 
     return Container(

@@ -23,7 +23,7 @@ class TagsGrid extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1,
+        childAspectRatio: 1.2,
       ),
       itemBuilder: (context, index) {
         final tag = tags[index];
